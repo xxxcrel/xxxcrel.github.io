@@ -8,7 +8,7 @@ menu: 关于
 permalink: /about/
 ---
 
-Write the code, Change the world
+# Be a geek
 
 ## 联系
 
