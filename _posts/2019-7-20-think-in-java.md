@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Java编程思想配书代码使用指南
-categories: Code
+categories: Java
 description: 
 keywords: Java, Ant, Github
 ---
