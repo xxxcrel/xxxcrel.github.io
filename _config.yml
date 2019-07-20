@@ -1,8 +1,8 @@
 # ---------------- #
 #   Main Configs   #
 # ---------------- #
-baseurl:
-url: xxxcrel.github.io
+baseurl: xxxcrel.github.io
+url:
 date_format: "ordinal"
 title: 克里尔肖
 subtitle: "Code Monkey"
