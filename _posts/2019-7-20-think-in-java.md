@@ -8,10 +8,10 @@ keywords: Java, Ant, Github
 
 ## Think In Java `真香指北`
 
-1. 代码完全从[BruceEckel](https://github.com/BruceEckel/TIJ4-code)
+1.代码完全从[BruceEckel](https://github.com/BruceEckel/TIJ4-code)
 clone过来的。看书不用源代码==白看(真香警告)
 
-2. 如何优雅的使用这些代码.
+2.如何优雅的使用这些代码.
 
     - 把examples/net/mindview/下所有文件`编译` `打包`成xxx.jar文件，atunit包有个依赖
     可从作者给出的[网站](http://sourceforge.net/projects/jboss/)中下载javassist.jar文件
@@ -51,7 +51,7 @@ clone过来的。看书不用源代码==白看(真香警告)
 
     - 下面可以暂时愉快的使用作者给我们写好的库了
 
-3. 使用`ant`构建
+3.使用`ant`构建
 
     - 从[官网](https://ant.apache.org/bindownload.cgi)下载(目前最新版本是1.10.6)
     > The Apache Ant team currently maintains two lines of development. The `1.9.x` releases require `Java5` at runtime and `1.10.x` requires `Java8` at runtime. Both lines are based off of Ant 1.9.7 and the 1.9.x releases are mostly bug fix releases while additional new features are developed for 1.10.x. We recommend using 1.10.x unless you are required to use versions of Java prior to Java8 during the build process.
