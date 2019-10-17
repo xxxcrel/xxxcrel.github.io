@@ -15,7 +15,7 @@ keywords: Java, Design Pattern, Decorator-Pattern
 
 - Java I/O 类图(JDK1.8)
 
-![Java I/O](../images/posts/java/img_java_io.png)
+![Java I/O](/images/posts/java/img_java_io.png)
 
 - 浅析(以input为例))
 
