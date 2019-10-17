@@ -6,18 +6,18 @@ description:
 keywords: Java, Design Pattern, Decorator-Pattern
 ---
 
-#### 参考书籍
+## 参考书籍
 
 - `<Head First Design Pattern>`  
 - `<Think In Java>`
 
-#### 通过对`Java I/O`的剖析来学习装饰器模式
+## 通过对`Java I/O`的剖析来学习装饰器模式
 
-- Java I/O 类图(JDK1.8)
+- ## Java I/O 类图(JDK1.8)
 
 ![Java I/O](/images/posts/java/img_java_io.png)
 
-- 浅析(以input为例))
+- ## 浅析(以input为例))
 
     1.Component下时`抽象组件类`,Java I/O用四个类来描述字节输入/输出(`InputStream`, `OutputStream`), 字符输入输出(`Reader`, `Writer`).
     > 这些类全部都是abstract 修饰的类,而不是纯粹的接口.
@@ -32,6 +32,6 @@ keywords: Java, Design Pattern, Decorator-Pattern
     3.ConcreteComponent下是`具体的装饰器`, 他们继承相应的`FilterXXX`抽象类,用来实现真正想要装饰的功能, 如BufferedInputStream内部会保存一个Byte数组buf用来缓存(当你想要很多数据时,这是一个很好的做法)
     > Reader和Writer与InputStream/OutputStream的方式会有些不同,但大致行为相似,值得注意的有:BufferReader属于装饰器类,但其直接继承至Reader,后面会做分析
 
-- 模式定义
+- ## 模式定义
 
     `动态的将责任附加到对象上,若要扩展功能, 装饰器提供了比继承更有弹性的替代方案`

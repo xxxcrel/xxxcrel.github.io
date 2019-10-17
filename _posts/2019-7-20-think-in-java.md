@@ -6,7 +6,7 @@ description:
 keywords: Java, Ant, Github
 ---
 
-## Think In Java `真香指北`
+# Think In Java `真香指北`
 
 1.代码完全从[BruceEckel](https://github.com/BruceEckel/TIJ4-code)
 clone过来的。看书不用源代码==白看(真香警告)
