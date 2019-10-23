@@ -69,5 +69,4 @@ keywords: Java, Ant, Github
 
 - 最后由于出书时间较早，作者使用的是JavaSE5，所以需要在build.xml中`target`标签里`name`属性为`build`中的fail行注释掉，才能正确运行ant
 
-**4.** 作者已经出了基于Java 8的新书**OnJava8**
-     > 这本书的内容目前看来还是有些陈旧了, 建议从新书开始
+**4.** 作者已经出版了基于Java 8的新书**OnJava8**这本书的内容目前看来还是有些陈旧了, 建议从新书开始。
