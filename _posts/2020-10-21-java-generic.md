@@ -229,7 +229,8 @@ keywords: Generic, Java
     speak方法表达的是:我接受任何Bird或Bird的子类的列表,
     并且在其上调用`bird.speak()`是语义安全的.
 
-    #### 为什么要这样写?
+    __为什么要这样写?__
+
     ```Java
     //编译错误, 编译器不会去知道Crow是Bird的子类
     List<Bird> birds = new ArrayList<Crow>();
@@ -246,7 +247,8 @@ keywords: Generic, Java
     //如果往里面添加了不正确的类型, 如传入的是List<Cuckoo>但是却add(new Crow()), 那么对传入的birds是属于破坏的行为, 你不能保证之后对birds的使用都是在调用Bird里面的相同的方法.
     ```
 
-    #### 春天的到来:`super`
+    __春天的到来:`super`__
+
     有时候就有这么一个需求, 有一个方法接收一个泛化的列表,并且向里面添加一些似乎合道理的东西.毕竟下面是合法且合理的:
     ```Java
     List<Bird> birds = new ArrayList<Bird>();
@@ -286,6 +288,6 @@ keywords: Generic, Java
     }
     ```
     `addToAppleStore`表达的意思是:我接受一个列表(仓库),并且这个仓库可能是Fruit, 也可能是可加工的(Processable), 也可能是可出售的(Salable),所以向里面添加任何Apple或者Apple子类是安全且正确的.但是这时候我们如果想要上面`extends`语法的便利性去调用Apple中的方法时,那么将会获得一个编译错误.
-    ##### 为什么? 
+    __为什么?__ 
     因为List的边界是lower boundes,所以传入的List中的元素不一定拥有Apple中的方法, 比如传入List<Processable> 那么Processable中没有Apple中的方法的.
 
