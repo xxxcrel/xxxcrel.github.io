@@ -91,22 +91,15 @@ keywords: Java, Map, HashMap
     }
     ```
 
-    分析一:直接new HashMap()时, 第一次调用put后会resize并初始化table = 16, threshold = 12(16 * 0.75)
-    分析二:创建HashMap时传入了初始大小, 第一次调用put后resize并初始化table为传入的初始大小的下一个最大2次幂,并重置threshold, 一和二都是属于懒加载
-    分析三:当table不为空,且在规定范围内,则double table和double threshold
-    分析四:这里非常精妙,这段循环的作用即将在oldCap时发生hash碰撞的链表归化为newCap大小时的链表,由于table的大小每次resize只增大了两倍, 所以每个Node的hash & (newCap -1)后只有两种情况.(具体分析请看[HashMap](https://tech.meituan.com/2016/06/24/java-hashmap.html)), 所以这段代码用过遍历链表, 将可以放到newTab中的Node组成新的链表并放到[oldCap + j]的位置
-    
-    oldCap: 16        
-    1111 0000 010`1` 0010              1111 0000 010`0` 0010 hashCode
-    ------------------- &              ------------------- &
-    0000 0000 0000 1111                0000 0000 0000 1111   (oldCap - 1)
-    0000 0000 000`0` 0010              0000 0000 000`0` 0010
+    **分析一:直接new HashMap()时, 第一次调用put后会resize并初始化table = 16, threshold = 12(16 * 0.75)**
 
-    newCap: 32
-    1111 0000 010`1` 0010              1111 0000 010`0` 0010 hashCode
-    ------------------- &              -------------------- &
-    0000 0000 0001 1111                0000 0000 0001 1111    (newCap - 1)
-    0000 0000 000`1` 1111              0000 0000 000`0` 1111
+    **分析二:创建HashMap时传入了初始大小, 第一次调用put后resize并初始化table为传入的初始大小的下一个最大2次幂,并重置threshold, 一和二都是属于懒加载**
+
+    **分析三:当table不为空,且在规定范围内,则double table和double threshold**
+
+    **分析四:这里非常精妙,这段循环的作用即将在oldCap时发生hash碰撞的链表归化为newCap大小时的链表,由于table的大小每次resize只增大了两倍, 所以每个Node的hash & (newCap -1)后只有两种情况.(具体分析请看[HashMap](https://tech.meituan.com/2016/06/24/java-hashmap.html)), 所以这段代码用过遍历链表, 将可以放到newTab中的Node组成新的链表并放到[oldCap + j]的位置**
+    
+    ![加载失败](../assets/images/hashmap-resize.png)
 
 
     **最后: 与笔记一一样没有分析红黑树的节点如何resize**
