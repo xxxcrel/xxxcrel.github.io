@@ -55,6 +55,8 @@ keywords: Java, Map, HashMap
 
     **`重点3`:key相同有两种情况,他们是用一个对象引用, 或者非空且equals返回true**
 
+    **`重点4`:从hash函数中可以得知put方法的Key可以为null, 而null值也就相当于0**
+
     **这就是当需要把对象作为hash容器的key时需要覆写`hashCode`和`equals`的原因**
     ```Java
     final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
