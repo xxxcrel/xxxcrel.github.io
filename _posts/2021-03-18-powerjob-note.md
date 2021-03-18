@@ -9,7 +9,7 @@ keywords: Java, powerjob, 分布式
 ## Powerjob 笔记
 
 ### 1.powerjob容器部署
-![fail](../images/posts/powerjob/powerjob-deploy-container.png)
+![fail](/images/posts/powerjob/powerjob-deploy-container.png)
 
 powerjob容器部署方案:
 
@@ -108,7 +108,7 @@ public void init() throws Exception {
 ```
 
 ### 2.powerjob任务传参实现方式
-![fail](../images/posts/powerjob/powerjob-send-param.png)
+![fail](/images/posts/powerjob/powerjob-send-param.png)
 具体到最终我们实现的BasicProcessor有两处重要的地方,
 
 一是根据调度中心发起调度请求时指定的ProcessorType构建真实运行的processor,具体代码逻辑在初始化ProcessorTracker时:
@@ -201,7 +201,7 @@ public void innerRun() throws InterruptedException {
 ```
 
 ### 3.Powerjob秒级任务(FIX_RATE, FIX_DELAY)、通用任务(CRON)调度方式
-![fail](../images/posts/powerjob/powerjob-schedule-overview.png)
+![fail](/images/posts/powerjob/powerjob-schedule-overview.png)
 区分秒级任务和通用任务的区别, 秒级任务调度频率高, 如果有一个任务每1s执行, 那如果从调度中心统一调度, 那光是从调度中心向worker节点发送请求的时间都已经花费超过1秒了
 所以powerjob在处理秒级任务时直接将定时任务下发给worker节点由worker节点自行处理, 只需按时上报任务状态即可, 
 而通用任务由于执行频率不高, 有些可能是每天执行一次, 每周执行一次, 而这些低频率的任务则由调度中心统一调度, 减轻worker端压力, 达到分布式任务调度的效果
@@ -290,11 +290,11 @@ private void scheduleFrequentJob(List<Long> appIds) {
 ```
 
 ### 4.powerjob-worker端任务分发原理
-![fail](../images/posts/powerjob/powerjob-worker-dispatch.png)
+![fail](/images/posts/powerjob/powerjob-worker-dispatch.png)
 powerjob使用AppName分组, 那么worker端就可以通过配置相同的appName来部署worker集群, 而在调度中心分发任务时, 则需要一个机制来确定如何分发任务到集群中
 
 首先当我们指定该app集群中某一个worker时, 即新建任务时写入某个worker IP,此时则用户自己明确该任务由当前worker(ip指定的worker)去执行.
-![fail](../images/powerjob/powerjob-workerip.png)
+![fail](/images/powerjob/powerjob-workerip.png)
 当该地址为空时,默认为该app下全部worker均需要接受这个调度任务, 那么此时就需要一种手段去分发这些任务:而powerjob将分发能力交给worker处理
 
 powerjob使用第一个可使用的worker为master, 最终由master(worker)去分发任务至该集群中所有worker:
