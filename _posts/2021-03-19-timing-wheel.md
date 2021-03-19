@@ -110,17 +110,22 @@ public void run() {
 
 1. 根据传入的延时时间构造HashedWheelTimerFuture
 
+```Java
 //targetTime为任务运行时间点
 long targetTime = System.currentTimeMillis() + unit.toMillis(delay);
 HashedWheelTimerFuture timerFuture = new HashedWheelTimerFuture(task, targetTime);
-然后在pushTaskToBucket中计算该任务所在槽:
+```
 
+然后在pushTaskToBucket中计算该任务所在槽:
+```Java
 // 总共的偏移量
 long offset = timerTask.targetTime - startTime;
 // 总共需要走的指针步数
 timerTask.totalTicks = offset / tickDuration;
 // 取余计算 bucket index
 int index = (int) (timerTask.totalTicks & mask);
+```
+
 假设时间轮开始运行时间startTime=10000ms, tickDuration=50ms, ticksPerWheel=10
 
 一个新超时任务需求为每5000ms运行一次:
