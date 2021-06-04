@@ -62,7 +62,7 @@ Spring Security 架构
     - 授权(authorization)
         当用户鉴定完成后, 即确定用户携带的身份信息真实且可靠, 一般会从持久化仓库(数据库, 缓存)获得相关信息,包括详细信息、拥有的权限等, 而授权的这一步骤发生在当用户鉴权完成后, 想要访问(Access)某一被保护资源(Secure Object)时对权限的鉴别.
 
-        ![load failed](../images/posts/spring/spring-security-big-picture.png)
+        ![load failed](/images/posts/spring/spring-security-big-picture.png)
 
         三种实现:
         1.Affirmative(肯定的): 一票决定权, 只要有一个Voter通过则视为投票通过
