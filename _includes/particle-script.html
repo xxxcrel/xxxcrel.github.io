@@ -1,0 +1,144 @@
+<script>
+  (function () {
+    const canvas = document.getElementById("scene");
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const pointer = { x: null, y: null, radius: 140 };
+    let particles = [];
+    let animationId = 0;
+
+    function viewportHeight() {
+      return Math.max(window.innerHeight, document.documentElement.clientHeight || 0);
+    }
+
+    function setCanvasSize() {
+      const width = window.innerWidth;
+      const height = viewportHeight();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+      canvas.width = Math.floor(width * dpr);
+      canvas.height = Math.floor(height * dpr);
+      canvas.style.width = width + "px";
+      canvas.style.height = height + "px";
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      createParticles(width, height);
+    }
+
+    function createParticles(width, height) {
+      const count = Math.max(40, Math.floor((width * height) / 18000));
+      particles = Array.from({ length: count }, () => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        vx: (Math.random() - 0.5) * 0.55,
+        vy: (Math.random() - 0.5) * 0.55,
+        size: Math.random() * 1.8 + 0.8
+      }));
+    }
+
+    function drawBackgroundGlow(width, height) {
+      const gradient = ctx.createRadialGradient(
+        width * 0.52,
+        height * 0.45,
+        0,
+        width * 0.52,
+        height * 0.45,
+        Math.max(width, height) * 0.7
+      );
+      gradient.addColorStop(0, "rgba(115, 224, 255, 0.07)");
+      gradient.addColorStop(1, "rgba(0, 0, 0, 0)");
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, width, height);
+    }
+
+    function tick() {
+      const width = window.innerWidth;
+      const height = viewportHeight();
+      const distanceLimit = width < 768 ? 90 : 120;
+
+      ctx.clearRect(0, 0, width, height);
+      drawBackgroundGlow(width, height);
+
+      for (const particle of particles) {
+        particle.x += prefersReducedMotion ? 0 : particle.vx;
+        particle.y += prefersReducedMotion ? 0 : particle.vy;
+
+        if (particle.x < 0 || particle.x > width) particle.vx *= -1;
+        if (particle.y < 0 || particle.y > height) particle.vy *= -1;
+
+        ctx.beginPath();
+        ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(184, 255, 246, 0.9)";
+        ctx.fill();
+      }
+
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const a = particles[i];
+          const b = particles[j];
+          const dx = a.x - b.x;
+          const dy = a.y - b.y;
+          const distance = Math.hypot(dx, dy);
+
+          if (distance < distanceLimit) {
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.strokeStyle = "rgba(115, 224, 255, " + (1 - distance / distanceLimit) + ")";
+            ctx.lineWidth = 0.8;
+            ctx.stroke();
+          }
+        }
+
+        if (pointer.x !== null) {
+          const dx = particles[i].x - pointer.x;
+          const dy = particles[i].y - pointer.y;
+          const distance = Math.hypot(dx, dy);
+
+          if (distance < pointer.radius) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(pointer.x, pointer.y);
+            ctx.strokeStyle = "rgba(184, 255, 246, " + (1 - distance / pointer.radius) + ")";
+            ctx.lineWidth = 0.9;
+            ctx.stroke();
+          }
+        }
+      }
+
+      animationId = requestAnimationFrame(tick);
+    }
+
+    window.addEventListener("mousemove", function (event) {
+      pointer.x = event.clientX;
+      pointer.y = event.clientY;
+    });
+
+    window.addEventListener("touchmove", function (event) {
+      const touch = event.touches[0];
+      if (!touch) return;
+      pointer.x = touch.clientX;
+      pointer.y = touch.clientY;
+    }, { passive: true });
+
+    window.addEventListener("mouseleave", function () {
+      pointer.x = null;
+      pointer.y = null;
+    });
+
+    window.addEventListener("touchend", function () {
+      pointer.x = null;
+      pointer.y = null;
+    });
+
+    window.addEventListener("resize", function () {
+      cancelAnimationFrame(animationId);
+      setCanvasSize();
+      tick();
+    });
+
+    setCanvasSize();
+    tick();
+  })();
+</script>

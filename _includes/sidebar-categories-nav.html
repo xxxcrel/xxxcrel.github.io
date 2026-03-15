@@ -4,8 +4,9 @@
   <ul class="list-group">
     {% assign sorted_categories = site.categories | sort %}
     {% for category in sorted_categories %}
+    {% assign category_name = category | first %}
     <li class="list-group-item">
-    <a href="#{{ category[0] }}">{{ category | first }}</a>
+    <a href="#{{ category_name | slugify }}">{{ category_name }}</a>
     <span class="badge">{{ category[1].size }}</span>
     </li>
     {% endfor %}

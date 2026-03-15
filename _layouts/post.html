@@ -1,48 +1,46 @@
 ---
 layout: default
 ---
-<section class="collection-head small geopattern" data-pattern-id="{{ page.title | truncate: 15, ''}}">
-  <div class="container">
-    <div class="columns">
-      <div class="column three-fourths">
-        <div class="collection-title">
-          <h1 class="collection-header">{{ page.title }}</h1>
-          <div class="collection-info">
-            {% if page.date %}
-            <span class="meta-info">
-              <span class="octicon octicon-calendar"></span> {{ page.date | date: "%Y/%m/%d" }}
-            </span>
-            {% endif %}
-            {% for cat in page.categories %}
-            <span class="meta-info">
-              <span class="octicon octicon-file-directory"></span>
-              <a href="{{ site.url }}/categories/#{{ cat }}" title="{{ cat }}">{{ cat }}</a>
-            </span>
-            {% endfor %}
-          </div>
-        </div>
-      </div>
-    </div>
+<section class="content-header">
+  <span class="section-badge">Article</span>
+  <h1 class="content-title">{{ page.title }}</h1>
+  <div class="meta-bar">
+    <span>{{ page.date | date: "%Y-%m-%d" }}</span>
+    {% for cat in page.categories %}
+    <a href="{{ '/categories/' | relative_url }}#{{ cat | slugify }}">{{ cat }}</a>
+    {% endfor %}
   </div>
+  {% if page.description %}
+  <p class="content-intro">{{ page.description }}</p>
+  {% endif %}
 </section>
-<!-- / .banner -->
-<section class="container content">
-  <div class="columns">
-    <div class="column three-fourths">
-      <article class="article-content markdown-body">
-        {{ content }}
-      </article>
-      <div class="share">
-        {% include sns-share.html %}
-      </div>
-      <div class="comment">
-        {% include comments.html %}
-      </div>
-    </div>
-    <div class="column one-fourth">
-      {% include sidebar-search.html %}
-      {% include sidebar-post-nav.html %}
-    </div>
-  </div>
+
+<article class="content-card markdown-body">
+  {{ content }}
+</article>
+
+<nav class="post-nav">
+  {% if page.previous %}
+  <a href="{{ page.previous.url | relative_url }}">
+    <span class="post-nav__label">上一篇</span>
+    <strong>{{ page.previous.title }}</strong>
+  </a>
+  {% else %}
+  <div class="post-nav__empty"></div>
+  {% endif %}
+
+  {% if page.next %}
+  <a href="{{ page.next.url | relative_url }}">
+    <span class="post-nav__label">下一篇</span>
+    <strong>{{ page.next.title }}</strong>
+  </a>
+  {% else %}
+  <div class="post-nav__empty"></div>
+  {% endif %}
+</nav>
+
+{% if page.comments != false %}
+<section class="comments-panel">
+  {% include comments.html %}
 </section>
-<!-- /section.content -->
+{% endif %}

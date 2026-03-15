@@ -1,8 +1,8 @@
 # ---------------- #
 #   Main Configs   #
 # ---------------- #
-baseurl: xxxcrel.github.io
-url:
+baseurl: ""
+url: "https://xxxcrel.github.io"
 date_format: "ordinal"
 title: 克里尔肖
 subtitle: "Code Monkey"
@@ -19,8 +19,8 @@ author: Xuecheng Wu
 organization: 
 organization_url: 
 github_username: xxxcrel
-location: Jiangxi, China
-email: crelxc@gmail.com
+location:  China
+email: xxxcrel@gmail.com
 
 # ---------------- #
 #    Navigation    #
@@ -33,14 +33,6 @@ navs:
   -
     href: /categories/
     label: 分类
-
-#   -
-#     href: /archives/
-#     label: 归档
-
-  -
-    href: /wiki/
-    label: 维基
 
   -
     href: /links/
@@ -63,6 +55,7 @@ kramdown:
     input: GFM
 highlighter: rouge
 paginate: 10
+paginate_path: "/page:num/"
 lsi: false
 quiet: false
 excerpt_separator: "\n\n"

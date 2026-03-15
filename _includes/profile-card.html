@@ -1,0 +1,46 @@
+<aside class="profile-panel">
+  <div class="profile-card">
+    <div class="profile-card__glow" aria-hidden="true"></div>
+    <div class="profile-card__inner">
+      <div class="profile-copy">
+        <span class="profile-badge">GitHub Pages</span>
+        <img class="profile-avatar" src="https://github.com/{{ site.github_username }}.png?size=320" alt="{{ site.title }} avatar">
+        <h1 class="profile-name">{{ site.title }}</h1>
+        <p class="profile-subtitle">{{ site.subtitle }}</p>
+        <p class="profile-description">{{ site.description }}</p>
+      </div>
+
+      <div class="profile-actions" aria-label="Primary links">
+        <a class="profile-action{% if page.url == '/' %} is-active{% endif %}" href="{{ '/' | relative_url }}">首页</a>
+        <a class="profile-action" href="https://github.com/{{ site.github_username }}" target="_blank" rel="noreferrer">GitHub</a>
+        <a class="profile-action{% if page.url == '/categories/' %} is-active{% endif %}" href="{{ '/categories/' | relative_url }}">分类</a>
+        <a class="profile-action{% if page.url == '/about/' %} is-active{% endif %}" href="{{ '/about/' | relative_url }}">关于</a>
+      </div>
+
+      <div class="profile-info-grid">
+        <div class="info-pill">
+          <span class="info-pill__label">Location</span>
+          <span class="info-pill__value">{{ site.location }}</span>
+        </div>
+        <div class="info-pill">
+          <span class="info-pill__label">Email</span>
+          <span class="info-pill__value">{{ site.email }}</span>
+        </div>
+        <div class="info-pill">
+          <span class="info-pill__label">Posts</span>
+          <span class="info-pill__value">{{ site.posts | size }}</span>
+        </div>
+        <div class="info-pill">
+          <span class="info-pill__label">Categories</span>
+          <span class="info-pill__value">{{ site.categories | size }}</span>
+        </div>
+      </div>
+
+      <div class="profile-footnote">
+        {% for website in site.data.social limit: 3 %}
+        <a href="{{ website.url }}" target="_blank" rel="noreferrer">{{ website.sitename }}</a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</aside>

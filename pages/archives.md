@@ -43,7 +43,7 @@ permalink: /archives/
     {% endif %}
 <li class="posts-list-item">
 <span class="posts-list-meta">{{ post.date | date:"%m-%d" }}</span>
-<a class="posts-list-name" href="{{ site.url }}{{ post.url }}">{{ post.title }}</a>
+<a class="posts-list-name" href="{{ post.url | relative_url }}">{{ post.title }}</a>
 </li>
 {% endfor %}
 </ol>
