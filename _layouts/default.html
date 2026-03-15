@@ -193,6 +193,13 @@
       text-transform: uppercase;
     }
 
+    .profile-hero {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-top: 14px;
+    }
+
     .profile-avatar {
       width: 128px;
       height: 128px;
@@ -236,7 +243,6 @@
     }
 
     .profile-action,
-    .theme-toggle,
     .button-link,
     .pagination a,
     .pagination span {
@@ -256,7 +262,6 @@
 
     .profile-action:hover,
     .profile-action.is-active,
-    .theme-toggle:hover,
     .button-link:hover,
     .pagination a:hover,
     .pagination .is-current {
@@ -270,21 +275,75 @@
       width: 100%;
     }
 
-    .theme-toggle {
-      width: 100%;
+    .theme-switch {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
       cursor: pointer;
-      font: inherit;
-      appearance: none;
-      -webkit-appearance: none;
-      gap: 10px;
+      flex: none;
     }
 
-    .theme-toggle__icon {
-      font-size: 1rem;
+    .theme-switch__input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
     }
 
-    .theme-toggle__label {
-      font-weight: 600;
+    .theme-switch__track {
+      position: relative;
+      display: inline-flex;
+      width: 60px;
+      height: 34px;
+      padding: 4px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      transition: background 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+    }
+
+    .theme-switch__track::before {
+      content: "☀️";
+      position: absolute;
+      left: 9px;
+      top: 7px;
+      font-size: 0.72rem;
+      opacity: 0.85;
+    }
+
+    .theme-switch__track::after {
+      content: "🌙";
+      position: absolute;
+      right: 8px;
+      top: 7px;
+      font-size: 0.72rem;
+      opacity: 0.9;
+    }
+
+    .theme-switch__thumb {
+      position: relative;
+      z-index: 1;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: linear-gradient(180deg, #ffffff, #cfe0ff);
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+      transition: transform 180ms ease, background 180ms ease;
+    }
+
+    .theme-switch__input:checked + .theme-switch__track {
+      border-color: rgba(115, 224, 255, 0.32);
+      background: rgba(115, 224, 255, 0.14);
+    }
+
+    .theme-switch__input:checked + .theme-switch__track .theme-switch__thumb {
+      transform: translateX(26px);
+      background: linear-gradient(180deg, #f3fbff, #91d8ff);
+    }
+
+    .theme-switch__input:focus-visible + .theme-switch__track {
+      outline: 2px solid rgba(115, 224, 255, 0.5);
+      outline-offset: 2px;
     }
 
     .profile-info-grid {
@@ -1138,24 +1197,19 @@
   <script>
     (function() {
       var root = document.documentElement;
-      var button = document.querySelector("[data-theme-toggle]");
-      if (!button) return;
-
-      var icon = button.querySelector(".theme-toggle__icon");
-      var label = button.querySelector(".theme-toggle__label");
+      var toggle = document.querySelector("[data-theme-toggle]");
+      if (!toggle) return;
 
       function sync(theme) {
-        var isDark = theme === "dark";
         root.setAttribute("data-theme", theme);
-        if (icon) icon.textContent = isDark ? "🌙" : "☀️";
-        if (label) label.textContent = isDark ? "黑夜模式" : "明亮模式";
+        toggle.checked = theme === "dark";
       }
 
       var current = root.getAttribute("data-theme") || "dark";
       sync(current);
 
-      button.addEventListener("click", function() {
-        var next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+      toggle.addEventListener("change", function() {
+        var next = toggle.checked ? "dark" : "light";
         try {
           localStorage.setItem("theme", next);
         } catch (e) {}

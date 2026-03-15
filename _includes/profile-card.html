@@ -4,7 +4,15 @@
     <div class="profile-card__inner">
       <div class="profile-copy">
         <span class="profile-badge">GitHub Pages</span>
-        <img class="profile-avatar" src="https://github.com/{{ site.github_username }}.png?size=320" alt="{{ site.title }} avatar">
+        <div class="profile-hero">
+          <label class="theme-switch" aria-label="切换黑夜模式">
+            <input class="theme-switch__input" type="checkbox" data-theme-toggle>
+            <span class="theme-switch__track">
+              <span class="theme-switch__thumb"></span>
+            </span>
+          </label>
+          <img class="profile-avatar" src="https://github.com/{{ site.github_username }}.png?size=320" alt="{{ site.title }} avatar">
+        </div>
         <h1 class="profile-name">{{ site.title }}</h1>
         <p class="profile-subtitle">{{ site.subtitle }}</p>
         <p class="profile-description">{{ site.description }}</p>
@@ -17,10 +25,6 @@
         <a class="profile-action{% if page.url == '/' %} is-active{% endif %}" href="{{ '/' | relative_url }}">首页</a>
         <a class="profile-action{% if page.url == '/categories/' %} is-active{% endif %}" href="{{ '/categories/' | relative_url }}">分类</a>
         <a class="profile-action{% if page.url == '/about/' %} is-active{% endif %}" href="{{ '/about/' | relative_url }}">关于</a>
-        <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换显示模式">
-          <span class="theme-toggle__icon" aria-hidden="true">🌙</span>
-          <span class="theme-toggle__label">黑夜模式</span>
-        </button>
       </div>
 
       <div class="profile-info-grid">
