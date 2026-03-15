@@ -3,14 +3,16 @@
     <div class="profile-card__glow" aria-hidden="true"></div>
     <div class="profile-card__inner">
       <div class="profile-copy">
-        <span class="profile-badge">GitHub Pages</span>
-        <div class="profile-hero">
+        <div class="profile-topbar">
+          <span class="profile-badge">GitHub Pages</span>
           <label class="theme-switch" aria-label="切换黑夜模式">
             <input class="theme-switch__input" type="checkbox" data-theme-toggle>
             <span class="theme-switch__track">
               <span class="theme-switch__thumb"></span>
             </span>
           </label>
+        </div>
+        <div class="profile-hero">
           <img class="profile-avatar" src="https://github.com/{{ site.github_username }}.png?size=320" alt="{{ site.title }} avatar">
         </div>
         <h1 class="profile-name">{{ site.title }}</h1>
