@@ -479,6 +479,24 @@
       margin: 1.35em 0 1.55em;
     }
 
+    .markdown-body div[class*="language-"].highlighter-rouge,
+    .markdown-body div[class*="language-"].highlighter-rouge > .highlight,
+    .markdown-body div[class*="language-"].highlighter-rouge > .highlight > pre.highlight,
+    .markdown-body div[class*="language-"].highlighter-rouge > .highlight > pre,
+    .markdown-body div[class*="language-"].highlighter-rouge code {
+      background: linear-gradient(180deg, var(--code-bg-top), var(--code-bg)) !important;
+      color: var(--code-text);
+    }
+
+    .markdown-body div[class*="language-"].highlighter-rouge > .highlight {
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .markdown-body div[class*="language-"].highlighter-rouge code {
+      background: transparent !important;
+    }
+
     .markdown-body .highlighter-rouge[class*="language-"]::before,
     .markdown-body div.highlight[class*="language-"]::before {
       position: absolute;
@@ -543,11 +561,13 @@
     .markdown-body div.highlight.language-cxx::before { content: "C++"; }
 
     .markdown-body pre,
-    .markdown-body .highlight pre {
+    .markdown-body .highlight pre,
+    .markdown-body .rouge-table pre,
+    .markdown-body figure.highlight pre {
       overflow: auto;
       padding: 24px 22px 20px;
       border-radius: 20px;
-      background: linear-gradient(180deg, var(--code-bg-top), var(--code-bg));
+      background: linear-gradient(180deg, var(--code-bg-top), var(--code-bg)) !important;
       border: 1px solid var(--code-border);
       box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.02),
@@ -633,22 +653,34 @@
       border-bottom: 0;
     }
 
+    .markdown-body .highlighter-rouge,
     .markdown-body .highlight,
+    .markdown-body figure.highlight,
     .markdown-body .highlight pre,
+    .markdown-body .rouge-table pre,
     .markdown-body pre code,
-    .markdown-body .highlight code {
+    .markdown-body .highlight code,
+    .markdown-body .rouge-code,
+    .markdown-body .rouge-code pre {
       color: var(--code-text);
-      background: transparent;
+      background: transparent !important;
     }
 
     .markdown-body .highlight table,
     .markdown-body .highlight tbody,
     .markdown-body .highlight tr,
     .markdown-body .highlight td,
+    .markdown-body .rouge-table,
+    .markdown-body .rouge-table tbody,
+    .markdown-body .rouge-table tr,
+    .markdown-body .rouge-table td,
     .markdown-body .highlight .rouge-table,
     .markdown-body .highlight .gutter,
     .markdown-body .highlight .code,
-    .markdown-body .highlight .lineno {
+    .markdown-body .highlight .lineno,
+    .markdown-body .rouge-gutter,
+    .markdown-body .rouge-code,
+    .markdown-body .lineno {
       background: transparent !important;
     }
 
