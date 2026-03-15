@@ -17,6 +17,10 @@
         <a class="profile-action{% if page.url == '/' %} is-active{% endif %}" href="{{ '/' | relative_url }}">首页</a>
         <a class="profile-action{% if page.url == '/categories/' %} is-active{% endif %}" href="{{ '/categories/' | relative_url }}">分类</a>
         <a class="profile-action{% if page.url == '/about/' %} is-active{% endif %}" href="{{ '/about/' | relative_url }}">关于</a>
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换显示模式">
+          <span class="theme-toggle__icon" aria-hidden="true">🌙</span>
+          <span class="theme-toggle__label">黑夜模式</span>
+        </button>
       </div>
 
       <div class="profile-info-grid">

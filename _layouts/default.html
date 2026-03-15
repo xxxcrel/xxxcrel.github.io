@@ -5,6 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% if page.title %}{{ page.title }} | {% endif %}{{ site.title }}</title>
   <meta name="description" content="{% if page.description %}{{ page.description | strip_html | strip_newlines }}{% elsif page.excerpt %}{{ page.excerpt | strip_html | strip_newlines }}{% else %}{{ site.description }}{% endif %}">
+  <script>
+    (function() {
+      var savedTheme = null;
+      try {
+        savedTheme = localStorage.getItem("theme");
+      } catch (e) {}
+      var prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+      var theme = savedTheme || (prefersDark ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    })();
+  </script>
   <style>
     :root {
       --bg-top: #08111f;
@@ -33,6 +44,33 @@
       --shadow-hover: 0 24px 56px rgba(0, 0, 0, 0.32);
       --radius-xl: 30px;
       --radius-lg: 24px;
+    }
+
+    :root[data-theme="light"] {
+      --bg-top: #eef6ff;
+      --bg-bottom: #dbe9fb;
+      --panel-bg: rgba(255, 255, 255, 0.72);
+      --panel-border: rgba(70, 111, 163, 0.14);
+      --reading-bg: rgba(255, 255, 255, 0.94);
+      --reading-border: rgba(111, 167, 255, 0.18);
+      --reading-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.52);
+      --code-bg: #e8f1fb;
+      --code-bg-top: #f4f8fd;
+      --code-border: rgba(111, 167, 255, 0.16);
+      --code-inline-bg: rgba(111, 167, 255, 0.14);
+      --code-inline-border: rgba(111, 167, 255, 0.14);
+      --code-text: #24384d;
+      --quote-bg: rgba(111, 167, 255, 0.08);
+      --quote-border: rgba(84, 146, 235, 0.48);
+      --table-stripe: rgba(111, 167, 255, 0.05);
+      --text-main: #1f3147;
+      --text-soft: rgba(31, 49, 71, 0.82);
+      --text-faint: rgba(31, 49, 71, 0.62);
+      --text-code-soft: #58718d;
+      --accent: #2a7fff;
+      --accent-strong: #0d9488;
+      --shadow: 0 24px 60px rgba(54, 90, 138, 0.14);
+      --shadow-hover: 0 18px 44px rgba(54, 90, 138, 0.18);
     }
 
     * {
@@ -198,6 +236,7 @@
     }
 
     .profile-action,
+    .theme-toggle,
     .button-link,
     .pagination a,
     .pagination span {
@@ -217,6 +256,7 @@
 
     .profile-action:hover,
     .profile-action.is-active,
+    .theme-toggle:hover,
     .button-link:hover,
     .pagination a:hover,
     .pagination .is-current {
@@ -228,6 +268,23 @@
 
     .profile-action {
       width: 100%;
+    }
+
+    .theme-toggle {
+      width: 100%;
+      cursor: pointer;
+      font: inherit;
+      appearance: none;
+      -webkit-appearance: none;
+      gap: 10px;
+    }
+
+    .theme-toggle__icon {
+      font-size: 1rem;
+    }
+
+    .theme-toggle__label {
+      font-weight: 600;
     }
 
     .profile-info-grid {
@@ -859,6 +916,99 @@
       color: #9df4b4;
     }
 
+    :root[data-theme="light"] body {
+      background:
+        radial-gradient(circle at 20% 20%, rgba(42, 127, 255, 0.12), transparent 30%),
+        radial-gradient(circle at 80% 10%, rgba(13, 148, 136, 0.08), transparent 24%),
+        linear-gradient(160deg, var(--bg-top), var(--bg-bottom));
+    }
+
+    :root[data-theme="light"] .noise {
+      opacity: 0.04;
+    }
+
+    :root[data-theme="light"] .profile-card__glow,
+    :root[data-theme="light"] .content-shell::before {
+      background:
+        radial-gradient(circle at top left, rgba(42, 127, 255, 0.12), transparent 24%),
+        radial-gradient(circle at bottom right, rgba(13, 148, 136, 0.08), transparent 20%);
+    }
+
+    :root[data-theme="light"] .content-card.markdown-body {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), var(--reading-bg));
+    }
+
+    :root[data-theme="light"] .markdown-body h1,
+    :root[data-theme="light"] .markdown-body h2,
+    :root[data-theme="light"] .markdown-body h3,
+    :root[data-theme="light"] .markdown-body h4,
+    :root[data-theme="light"] .markdown-body h5,
+    :root[data-theme="light"] .markdown-body h6,
+    :root[data-theme="light"] .markdown-body strong,
+    :root[data-theme="light"] .post-item h2 a,
+    :root[data-theme="light"] .posts-list-name,
+    :root[data-theme="light"] .listing-item a {
+      color: #17314b;
+    }
+
+    :root[data-theme="light"] .markdown-body p,
+    :root[data-theme="light"] .markdown-body li,
+    :root[data-theme="light"] .markdown-body dd,
+    :root[data-theme="light"] .markdown-body td,
+    :root[data-theme="light"] .markdown-body th {
+      color: rgba(31, 49, 71, 0.92);
+    }
+
+    :root[data-theme="light"] .markdown-body code {
+      color: #204060;
+    }
+
+    :root[data-theme="light"] .markdown-body .highlight .c,
+    :root[data-theme="light"] .markdown-body .highlight .cm,
+    :root[data-theme="light"] .markdown-body .highlight .c1,
+    :root[data-theme="light"] .markdown-body .highlight .cs,
+    :root[data-theme="light"] .markdown-body .highlight .cp {
+      color: #73879d;
+    }
+
+    :root[data-theme="light"] .markdown-body .highlight .k,
+    :root[data-theme="light"] .markdown-body .highlight .kc,
+    :root[data-theme="light"] .markdown-body .highlight .kd,
+    :root[data-theme="light"] .markdown-body .highlight .kn,
+    :root[data-theme="light"] .markdown-body .highlight .kp,
+    :root[data-theme="light"] .markdown-body .highlight .kr,
+    :root[data-theme="light"] .markdown-body .highlight .kt,
+    :root[data-theme="light"] .markdown-body .highlight .nt,
+    :root[data-theme="light"] .markdown-body .highlight .ow {
+      color: #2563eb;
+    }
+
+    :root[data-theme="light"] .markdown-body .highlight .s,
+    :root[data-theme="light"] .markdown-body .highlight .sa,
+    :root[data-theme="light"] .markdown-body .highlight .sb,
+    :root[data-theme="light"] .markdown-body .highlight .sc,
+    :root[data-theme="light"] .markdown-body .highlight .sd,
+    :root[data-theme="light"] .markdown-body .highlight .s1,
+    :root[data-theme="light"] .markdown-body .highlight .s2,
+    :root[data-theme="light"] .markdown-body .highlight .se,
+    :root[data-theme="light"] .markdown-body .highlight .sh,
+    :root[data-theme="light"] .markdown-body .highlight .si,
+    :root[data-theme="light"] .markdown-body .highlight .sx,
+    :root[data-theme="light"] .markdown-body .highlight .sr,
+    :root[data-theme="light"] .markdown-body .highlight .ss {
+      color: #0f766e;
+    }
+
+    :root[data-theme="light"] .markdown-body .highlight .m,
+    :root[data-theme="light"] .markdown-body .highlight .mb,
+    :root[data-theme="light"] .markdown-body .highlight .mf,
+    :root[data-theme="light"] .markdown-body .highlight .mh,
+    :root[data-theme="light"] .markdown-body .highlight .mi,
+    :root[data-theme="light"] .markdown-body .highlight .mo,
+    :root[data-theme="light"] .markdown-body .highlight .il {
+      color: #d97706;
+    }
+
     .posts-list-meta {
       color: var(--text-faint);
       font-size: 0.92rem;
@@ -985,5 +1135,33 @@
     </main>
   </div>
   {% include particle-script.html %}
+  <script>
+    (function() {
+      var root = document.documentElement;
+      var button = document.querySelector("[data-theme-toggle]");
+      if (!button) return;
+
+      var icon = button.querySelector(".theme-toggle__icon");
+      var label = button.querySelector(".theme-toggle__label");
+
+      function sync(theme) {
+        var isDark = theme === "dark";
+        root.setAttribute("data-theme", theme);
+        if (icon) icon.textContent = isDark ? "🌙" : "☀️";
+        if (label) label.textContent = isDark ? "黑夜模式" : "明亮模式";
+      }
+
+      var current = root.getAttribute("data-theme") || "dark";
+      sync(current);
+
+      button.addEventListener("click", function() {
+        var next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+        try {
+          localStorage.setItem("theme", next);
+        } catch (e) {}
+        sync(next);
+      });
+    })();
+  </script>
 </body>
 </html>
