@@ -18,7 +18,7 @@ Spring Security 架构
 
         `AuthenticationProvider`: 该接口就两个方法
     
-        ```Java
+        ```java
         //传入的参数是用户传入的认证信息, 此时的Authencation是未经认证的,
         //根据具体实现对其进行认证后返回, 该方法最终由ProviderManageer调用
         Authentication authenticate(Authentication authentication) throws AuthenticationException
@@ -28,7 +28,7 @@ Spring Security 架构
 
         `ProviderManger`: 该类核心即通过循环调用配置的AuthenticationProvider对用户进行鉴权
 
-        ```Java
+        ```java
         //循环调用配置的AuthenticationProvider
         for (AuthenticationProvider provider : getProviders()) {
             //该AuthenticationProvider是否支持

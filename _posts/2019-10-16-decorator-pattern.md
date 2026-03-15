@@ -29,7 +29,7 @@ keywords: Java, Design Pattern, Decorator-Pattern
 
 - **代码示例**
 
-    ```Java
+    ```java
     public static void main(String[] args) throws IOException
     {
         DataOutputStream out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream("test.txt")));
@@ -66,7 +66,7 @@ keywords: Java, Design Pattern, Decorator-Pattern
 
     `LowerCaseInputStream.java`
 
-    ```Java
+    ```java
     public class LowerCaseInputStream extends FilterInputStream
     {
         public LowerCaseInputStream(InputStream in)

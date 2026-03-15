@@ -22,7 +22,7 @@ MyHandler内部仅需要实现BasicProcessor则可成为一个任务:
 容器上传至worker节点后,其相当于一个单独的执行单元,只需要在任务调度时指定Java Container模式(即上传的jar包)即可和普通任务调度方式一致
 
 其具体部署细节:
-```Java
+```java
 //在worker节点接到调度中心请求后, 进行容器部署(即加载jar包)
 public static synchronized void deployContainer(ServerDeployContainerRequest request) {
 
@@ -112,7 +112,7 @@ public void init() throws Exception {
 具体到最终我们实现的BasicProcessor有两处重要的地方,
 
 一是根据调度中心发起调度请求时指定的ProcessorType构建真实运行的processor,具体代码逻辑在初始化ProcessorTracker时:
-```Java
+```java
 private void initProcessor() throws Exception {
 
         ProcessorType processorType = ProcessorType.valueOf(instanceInfo.getProcessorType());
@@ -205,8 +205,8 @@ public void innerRun() throws InterruptedException {
 区分秒级任务和通用任务的区别, 秒级任务调度频率高, 如果有一个任务每1s执行, 那如果从调度中心统一调度, 那光是从调度中心向worker节点发送请求的时间都已经花费超过1秒了
 所以powerjob在处理秒级任务时直接将定时任务下发给worker节点由worker节点自行处理, 只需按时上报任务状态即可, 
 而通用任务由于执行频率不高, 有些可能是每天执行一次, 每周执行一次, 而这些低频率的任务则由调度中心统一调度, 减轻worker端压力, 达到分布式任务调度的效果
-powerjob中处理秒级任务(FIX_RATE)、通用任务(CRON)具体实现类: com.github.kfcfans.powerjob.server.service.timing.schedule.OmsScheduleService:
-```Java
+powerjob中处理秒级任务(FIX_RATE)、通用任务(CRON)具体实现类: com.github.kfcfans.powerjob.server.service.timing.schedule.OmsScheduleService:
+```java
 //通用任务处理
 private void scheduleCronJob(List<Long> appIds) {
 
@@ -300,7 +300,7 @@ powerjob使用AppName分组, 那么worker端就可以通过配置相同的appNam
 powerjob使用第一个可使用的worker为master, 最终由master(worker)去分发任务至该集群中所有worker:
 
 powerjob选主源码:
-```Java
+```java
 public void dispatch(JobInfoDO jobInfo, long instanceId, long currentRunningTimes, String instanceParams, Long wfInstanceId) {
 		
 		//....一些前置检测
@@ -352,7 +352,7 @@ public void dispatch(JobInfoDO jobInfo, long instanceId, long currentRunningTime
 当请求到达master worker时, worker根据调度类型创建具体的TaskTracker(CommonTaskTracker, FrequentTaskTracker)
 
 TaskTracker初始化时根据ServerScheduleJobReq中携带的所有worker地址创建ProcessorTracker:
-```Java
+```java
 protected TaskTracker(ServerScheduleJobReq req) {
 
         // 初始化成员变量
@@ -381,7 +381,7 @@ protected TaskTracker(ServerScheduleJobReq req) {
 ```
 之后TaskTracker会开启一个Dispatcher线程处理分发任务,通过初始化时保存的集群中的ProcessorTracker进行任务分发:
 *com.github.kfcfans.powerjob.worker.core.tracker.task.TaskTracker.Dispatcher*
-```Java
+```java
 public void run() {
 
            	//...

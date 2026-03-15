@@ -11,7 +11,7 @@ keywords: Java, Map, HashMap
 - HashMap的resize(阿成直呼妙啊)
   
     **上源码**
-    ```Java
+    ```java
     final Node<K,V>[] resize() {
         Node<K,V>[] oldTab = table;
         int oldCap = (oldTab == null) ? 0 : oldTab.length;

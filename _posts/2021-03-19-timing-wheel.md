@@ -40,7 +40,7 @@ tickDuration确定时间轮的转动频率, 类比手表指针转动频率
 ticksPerWheel确定时间轮槽数量, 类比手表指针数量
 
 processThreadNum未执行当前槽的线程数量,根据业务进行优化
-```Java
+```java
 public HashedWheelTimer(long tickDuration, int ticksPerWheel, int processThreadNum) {
  
         this.tickDuration = tickDuration;
@@ -78,7 +78,7 @@ public HashedWheelTimer(long tickDuration, int ticksPerWheel, int processThreadN
 ![fail](/images/posts/powerjob/powerjob-indicator-run.png)
 该部分代码是整个时间轮的核心运行逻辑:
 
-```Java
+```java
 public void run() {
  
             while (!stop.get()) {
@@ -110,14 +110,14 @@ public void run() {
 
 1. 根据传入的延时时间构造HashedWheelTimerFuture
 
-```Java
+```java
 //targetTime为任务运行时间点
 long targetTime = System.currentTimeMillis() + unit.toMillis(delay);
 HashedWheelTimerFuture timerFuture = new HashedWheelTimerFuture(task, targetTime);
 ```
 
 然后在pushTaskToBucket中计算该任务所在槽:
-```Java
+```java
 // 总共的偏移量
 long offset = timerTask.targetTime - startTime;
 // 总共需要走的指针步数
@@ -147,7 +147,7 @@ index = 500 & 9 = 0
 currentTick为走过的tick数, 该值随着时间增加(每调用一次tickTack()则加1)
 
 最红根据totalTicks和currentTick的比较确认是否本轮调度, 如果totalTicks大于当前的指针步数, 则说明该任务不在本轮调度, 直接pass
-```Java
+```java
 // 本轮直接调度
  if (timerFuture.totalTicks <= currentTick) {
     if (timerFuture.totalTicks < currentTick) {

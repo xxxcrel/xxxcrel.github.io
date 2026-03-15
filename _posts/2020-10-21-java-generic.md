@@ -14,7 +14,7 @@ keywords: Generic, Java
   2. 有更强大的语义去写容器库
 
 - ### 简单泛型栗子
-  ```Java
+  ```java
   public class LinkedStack<T> {
     private Node<T> top;
     private int size;
@@ -72,7 +72,7 @@ keywords: Generic, Java
     }
     ```
     似乎泛型按照我们设想的那样,将T占位符换成的我们声明的参数`String`, `Integer`并生成了两个不同的Stack.但是结果并不是, 它们仍然是相同的类型
-    ```Java
+    ```java
     public static void main(String[] args) {
         Class c1 = new ArrayList<String>().getClass();
         Class c2 = new ArrayList<Integer>().getClass();
@@ -84,7 +84,7 @@ keywords: Generic, Java
     `泛型擦除`.
 
     简单例子
-    ```Java
+    ```java
     public class Holder<T> {
         private T item;
         public Holder(T item){
@@ -102,7 +102,7 @@ keywords: Generic, Java
     }
     ```
     运行`javap -v Holder`
-    ```Java
+    ```java
     Constant pool:
     #1 = Methodref          #8.#26         // java/lang/Object."<init>":()V
     #2 = Fieldref           #3.#27         // Holder.item:Ljava/lang/Object;
@@ -125,7 +125,7 @@ keywords: Generic, Java
     从上面的Fieldref为Object可知, T被擦除到它的上边界,编译器自动加了`<T extends Object>`,也就是说T其实就是Object.
 
     继续验证,现在设置T的边界为Bird
-    ```Java
+    ```java
     class Bird{
 
     }
@@ -140,7 +140,7 @@ keywords: Generic, Java
     ```
 
     由javap可得如下
-    ```Java
+    ```java
     Constant pool:
     #1 = Methodref          #8.#26         // java/lang/Object."<init>":()V
     #2 = Fieldref           #3.#27         // Holder.item:LBird;
@@ -157,7 +157,7 @@ keywords: Generic, Java
     这里T被擦除到Bird,相当于在Holder中定义`Bird item;`, 也就是说我们想象的美好生活都被java编译器神秘的替换了,那main方法中的代码是如何正确运行的呢?
 
     上面main中holder.getItem()生成的字节码如下
-    ```Java
+    ```java
     11: invokevirtual #6                  // Method getItem:()Ljava/lang/Object;
     14: checkcast     #7                  // class java/lang/String
     ```
@@ -167,7 +167,7 @@ keywords: Generic, Java
 
     现在假设我有一个方法用来打印一个集合(Collection),如下
 
-    ```Java
+    ```java
     //出自官方
     //5.0之前
     void printCollection(Collection c) {
@@ -187,7 +187,7 @@ keywords: Generic, Java
     然而没啥用,并没有带来任何便利和语义上的清晰
 
     #### 使用通配符`?`
-    ```Java
+    ```java
     void printCollection(Collection<?> c) {
         for (Object e : c) {
             System.out.println(e);
@@ -197,7 +197,7 @@ keywords: Generic, Java
     现在似乎可以了,但现在有个新需求,我希望这个Collection是某个限定类型的子类.
 
     #### 更具体的`extends`
-    ```Java
+    ```java
     abstract class Bird{
         abstract void speak();
     }
@@ -231,14 +231,14 @@ keywords: Generic, Java
 
     __为什么要这样写?__
 
-    ```Java
+    ```java
     //编译错误, 编译器不会去知道Crow是Bird的子类
     List<Bird> birds = new ArrayList<Crow>();
     ```
     所以List<? extends Bird> birds表达的意思是, birds:我能保证我里面放的是Bird或者他的子类,你可以取出来当Bird使用.
 
     但是,这时候如果想要往里面添加一些东西, 比如:
-    ```Java
+    ```java
     void speak(List<? extends Bird> birds){
         birds.add(new Cuckoo());//编译错误
         birds.add(new Crow());//同上
@@ -250,13 +250,13 @@ keywords: Generic, Java
     __春天的到来:`super`__
 
     有时候就有这么一个需求, 有一个方法接收一个泛化的列表,并且向里面添加一些似乎合道理的东西.毕竟下面是合法且合理的:
-    ```Java
+    ```java
     List<Bird> birds = new ArrayList<Bird>();
     birds.add(new Cuckoo());
     ```
     但是这个birds只能接受`List<Bird>`列表,
     使用`super`
-    ```Java
+    ```java
     //可加工的
     interface Processable{
 

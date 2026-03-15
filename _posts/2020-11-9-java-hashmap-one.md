@@ -26,7 +26,7 @@ keywords: Java, Map, HashMap
 
     **第一行的-1用来处理恰好情形如64, 256**
 
-    ```Java
+    ```java
     static final int MAXIMUM_CAPACITY = 1 << 30;
 
     int tableSizeFor(int cap){
@@ -58,7 +58,7 @@ keywords: Java, Map, HashMap
     **`重点4`:从hash函数中可以得知put方法的Key可以为null, 而null值也就相当于0**
 
     **这就是当需要把对象作为hash容器的key时需要覆写`hashCode`和`equals`的原因**
-    ```Java
+    ```java
     final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
                    boolean evict) {
         Node<K,V>[] tab; Node<K,V> p; int n, i;
@@ -109,7 +109,7 @@ keywords: Java, Map, HashMap
 - get(K key)内部调用getNode 
     
     **同put一样通过(n - 1) & hash获得内部数组的索引,如果找到,则通过遍历当前桶中的Node查找**
-    ```Java
+    ```java
     final Node<K,V> getNode(int hash, Object key) {
         Node<K,V>[] tab; Node<K,V> first, e; int n; K k;
         if ((tab = table) != null && (n = tab.length) > 0 &&
