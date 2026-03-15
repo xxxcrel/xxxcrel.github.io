@@ -24,8 +24,8 @@
       --quote-border: rgba(115, 224, 255, 0.55);
       --table-stripe: rgba(255, 255, 255, 0.03);
       --text-main: #f4f7fb;
-      --text-soft: rgba(244, 247, 251, 0.76);
-      --text-faint: rgba(244, 247, 251, 0.56);
+      --text-soft: rgba(244, 247, 251, 0.9);
+      --text-faint: rgba(244, 247, 251, 0.74);
       --text-code-soft: #9db7d7;
       --accent: #73e0ff;
       --accent-strong: #b8fff6;
@@ -395,6 +395,14 @@
       text-rendering: optimizeLegibility;
     }
 
+    .markdown-body p,
+    .markdown-body li,
+    .markdown-body dd,
+    .markdown-body td,
+    .markdown-body th {
+      color: rgba(244, 247, 251, 0.94);
+    }
+
     .markdown-body h1,
     .markdown-body h2,
     .markdown-body h3,
@@ -467,13 +475,77 @@
 
     .markdown-body .highlighter-rouge,
     .markdown-body div.highlight {
+      position: relative;
       margin: 1.35em 0 1.55em;
     }
+
+    .markdown-body .highlighter-rouge[class*="language-"]::before,
+    .markdown-body div.highlight[class*="language-"]::before {
+      position: absolute;
+      top: 10px;
+      right: 14px;
+      z-index: 1;
+      padding: 4px 10px;
+      border: 1px solid rgba(140, 199, 255, 0.16);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.04);
+      color: #b9d7f7;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .markdown-body .highlighter-rouge.language-java::before,
+    .markdown-body div.highlight.language-java::before { content: "Java"; }
+    .markdown-body .highlighter-rouge.language-javascript::before,
+    .markdown-body div.highlight.language-javascript::before { content: "JavaScript"; }
+    .markdown-body .highlighter-rouge.language-js::before,
+    .markdown-body div.highlight.language-js::before { content: "JS"; }
+    .markdown-body .highlighter-rouge.language-typescript::before,
+    .markdown-body div.highlight.language-typescript::before { content: "TypeScript"; }
+    .markdown-body .highlighter-rouge.language-ts::before,
+    .markdown-body div.highlight.language-ts::before { content: "TS"; }
+    .markdown-body .highlighter-rouge.language-html::before,
+    .markdown-body div.highlight.language-html::before { content: "HTML"; }
+    .markdown-body .highlighter-rouge.language-xml::before,
+    .markdown-body div.highlight.language-xml::before { content: "XML"; }
+    .markdown-body .highlighter-rouge.language-css::before,
+    .markdown-body div.highlight.language-css::before { content: "CSS"; }
+    .markdown-body .highlighter-rouge.language-scss::before,
+    .markdown-body div.highlight.language-scss::before { content: "SCSS"; }
+    .markdown-body .highlighter-rouge.language-bash::before,
+    .markdown-body div.highlight.language-bash::before,
+    .markdown-body .highlighter-rouge.language-shell::before,
+    .markdown-body div.highlight.language-shell::before { content: "Shell"; }
+    .markdown-body .highlighter-rouge.language-yaml::before,
+    .markdown-body div.highlight.language-yaml::before { content: "YAML"; }
+    .markdown-body .highlighter-rouge.language-json::before,
+    .markdown-body div.highlight.language-json::before { content: "JSON"; }
+    .markdown-body .highlighter-rouge.language-markdown::before,
+    .markdown-body div.highlight.language-markdown::before { content: "Markdown"; }
+    .markdown-body .highlighter-rouge.language-sql::before,
+    .markdown-body div.highlight.language-sql::before { content: "SQL"; }
+    .markdown-body .highlighter-rouge.language-python::before,
+    .markdown-body div.highlight.language-python::before { content: "Python"; }
+    .markdown-body .highlighter-rouge.language-go::before,
+    .markdown-body div.highlight.language-go::before { content: "Go"; }
+    .markdown-body .highlighter-rouge.language-ruby::before,
+    .markdown-body div.highlight.language-ruby::before { content: "Ruby"; }
+    .markdown-body .highlighter-rouge.language-kotlin::before,
+    .markdown-body div.highlight.language-kotlin::before { content: "Kotlin"; }
+    .markdown-body .highlighter-rouge.language-swift::before,
+    .markdown-body div.highlight.language-swift::before { content: "Swift"; }
+    .markdown-body .highlighter-rouge.language-c::before,
+    .markdown-body div.highlight.language-c::before { content: "C"; }
+    .markdown-body .highlighter-rouge.language-cpp::before,
+    .markdown-body div.highlight.language-cpp::before,
+    .markdown-body .highlighter-rouge.language-cxx::before,
+    .markdown-body div.highlight.language-cxx::before { content: "C++"; }
 
     .markdown-body pre,
     .markdown-body .highlight pre {
       overflow: auto;
-      padding: 20px 22px;
+      padding: 24px 22px 20px;
       border-radius: 20px;
       background:
         linear-gradient(180deg, var(--code-bg-top), var(--code-bg));
@@ -498,8 +570,13 @@
       padding: 14px 18px;
       border-left: 3px solid var(--quote-border);
       background: var(--quote-bg);
-      color: var(--text-soft);
+      color: rgba(244, 247, 251, 0.84);
       border-radius: 0 16px 16px 0;
+    }
+
+    .markdown-body blockquote p,
+    .markdown-body blockquote li {
+      color: inherit;
     }
 
     .markdown-body table {
@@ -583,7 +660,7 @@
     .markdown-body .highlight .kt,
     .markdown-body .highlight .nt,
     .markdown-body .highlight .ow {
-      color: #8cc7ff;
+      color: #7dcfff;
       font-weight: 600;
     }
 
@@ -600,7 +677,7 @@
     .markdown-body .highlight .sx,
     .markdown-body .highlight .sr,
     .markdown-body .highlight .ss {
-      color: #95f0c6;
+      color: #9ece6a;
     }
 
     .markdown-body .highlight .m,
@@ -610,7 +687,7 @@
     .markdown-body .highlight .mi,
     .markdown-body .highlight .mo,
     .markdown-body .highlight .il {
-      color: #ffd580;
+      color: #ffb86c;
     }
 
     .markdown-body .highlight .na,
@@ -626,13 +703,35 @@
     .markdown-body .highlight .vc,
     .markdown-body .highlight .vg,
     .markdown-body .highlight .vi {
-      color: #f6c177;
+      color: #f7768e;
+    }
+
+    .markdown-body .highlight .nc,
+    .markdown-body .highlight .nn,
+    .markdown-body .highlight .ne {
+      color: #e0af68;
+    }
+
+    .markdown-body .highlight .nf,
+    .markdown-body .highlight .fm {
+      color: #7aa2f7;
     }
 
     .markdown-body .highlight .o,
     .markdown-body .highlight .p,
     .markdown-body .highlight .w {
       color: var(--text-code-soft);
+    }
+
+    .markdown-body .highlight .nl,
+    .markdown-body .highlight .py {
+      color: #73daca;
+    }
+
+    .markdown-body .highlight .gh,
+    .markdown-body .highlight .gu {
+      color: #bb9af7;
+      font-weight: 700;
     }
 
     .markdown-body .highlight .err,
