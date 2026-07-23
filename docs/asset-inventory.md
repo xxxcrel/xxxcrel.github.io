@@ -11,7 +11,6 @@
 - Three.js `0.180.0`（固定版本 CDN）
 - `assets/js/three-background.js`
 - `_includes/profile-card.html`
-- `_includes/comments.html`（由 page/post 布局按需使用）
 
 ## 内容资源
 
@@ -60,3 +59,27 @@
 4. 删除后重新执行 Pages build 和内部链接检查。
 
 本轮只记录候选项，不直接删除，避免将历史文章的隐式能力与布局拆分混在同一变更中。
+
+## 后续任务
+
+### P0：验证新版页面
+
+- 检查首页、文章、分类、归档、关于和 404 页面。
+- 检查桌面端与移动端布局。
+- 检查亮色、暗色和 `prefers-reduced-motion` 模式。
+- 通过浏览器 Performance/Lighthouse 检查 Three.js 背景的帧率、CPU 和首屏影响。
+- 确认 GitHub Actions 的 Pages build 成功。
+
+### P1：移除评论功能（代码已完成）
+
+- [x] 从 `_layouts/page.html` 和 `_layouts/post.html` 删除评论区域。
+- [x] 删除 `_includes/comments.html`。
+- [x] 从 `_config.yml` 删除 Gitalk、Gitment、Disqus 及 `lazy_load_disqus` 配置。
+- [ ] 轮换或注销当前暴露过的 GitHub OAuth 凭证（需要在 GitHub 账户中操作）。
+- [x] 清理各页面 front matter 中不再生效的 `comments` 字段。
+- [ ] 构建站点并确认文章、普通页面和 404 页面不再加载评论相关 CDN 资源。
+
+### P2：删除确认废弃的前端资源
+
+- 按功能分批删除旧 includes、CSS、JavaScript 和 vendor 文件。
+- 每批删除后执行 Pages build 和关键页面检查。

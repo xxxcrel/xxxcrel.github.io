@@ -124,8 +124,7 @@ a {
 .meta-bar,
 .post-item,
 .pagination,
-.post-nav,
-.comments-panel {
+.post-nav {
   border: 1px solid var(--panel-border);
   background: var(--panel-bg);
   box-shadow: var(--shadow);
@@ -448,8 +447,7 @@ a {
 .content-header,
 .content-card,
 .pagination,
-.post-nav,
-.comments-panel {
+.post-nav {
   position: relative;
   padding: 22px;
   border-radius: var(--radius-lg);
@@ -1172,7 +1170,6 @@ a {
   .content-card,
   .pagination,
   .post-nav,
-  .comments-panel,
   .post-item {
     padding: 18px;
     border-radius: 20px;

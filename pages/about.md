@@ -3,7 +3,6 @@ layout: page
 title: About
 description: Be a geek
 keywords: Xuecheng, 克里尔
-comments: true
 menu: 关于
 permalink: /about/
 ---
