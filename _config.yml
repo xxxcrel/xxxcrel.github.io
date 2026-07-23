@@ -7,20 +7,26 @@ date_format: "ordinal"
 title: 克里尔肖
 subtitle: "Code Monkey"
 description: "克里尔的个人博客"
-keywords: 克里尔, Xuecheng, xxxcrel
-timezone: Asia/Jiangxi
+lang: zh-CN
+timezone: Asia/Shanghai
 encoding: "utf-8"
-side_bar_repo_limit: 5
+logo: "https://github.com/xxxcrel.png?size=320"
 
 # ---------------- #
 #      Author      #
 # ---------------- #
-author: Xuecheng Wu
-organization: 
-organization_url: 
+author:
+    name: Xuecheng Wu
+    url: https://github.com/xxxcrel
 github_username: xxxcrel
 location:  China
 email: xxxcrel@gmail.com
+social:
+    name: Xuecheng Wu
+    links:
+        - https://github.com/xxxcrel
+        - https://www.weibo.com/3919936481/profile
+        - https://www.zhihu.com/people/j-devi
 
 # ---------------- #
 #    Navigation    #
@@ -60,33 +66,17 @@ lsi: false
 quiet: false
 excerpt_separator: "\n\n"
 permalink: /:year/:month/:day/:title/
-gems:
+plugins:
     - jekyll-github-metadata
     - rouge
-#     - jekyll-html-pipeline
     - jekyll-paginate
     - jekyll-sitemap
     - jekyll-feed
+    - jekyll-seo-tag
     - jemoji
-#     - jekyll-mentions
 collections:
     wiki:
         output: true
         permalink: /wiki/:path/
 
 repository: xxxcrel/xxxcrel.github.io
-
-# ---------------- #
-#      Search      #
-# ---------------- #
-simple_jekyll_search:
-    # 是否支持全文搜索
-    fulltext: false
-    # 最多显示多少条搜索结果
-    limit: 10
-
-# ---------------- #
-#    Analytics     #
-# ---------------- #
-google:
-    analytics_id: UA-80669434-1

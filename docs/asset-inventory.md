@@ -20,45 +20,16 @@
 - `images/posts/**`
 - `_data/**`
 
-## 未进入当前主渲染链
+## 已删除的旧主题资源
 
-下面的资源来自旧主题或已隐藏的功能，目前没有从新 `default` 布局加载：
+2026-07-23 根据全仓引用扫描删除：
 
-- `_includes/header.html`
-- `_includes/footer.html`
-- `_includes/sidebar-*.html`
-- `_includes/sns-share.html`
-- `_includes/particle-script.html`（已由 Three.js 背景替代）
-- `assets/css/components/**`
-- `assets/css/globals/**`
-- `assets/css/pages/**`
-- `assets/css/posts/**`
-- `assets/css/pygments/**`
-- `assets/css/sections/**`
-- `assets/js/jquery-ui.js`
-- `assets/js/jquery.toc.js`
-- `assets/js/main.js`
-- `assets/js/search.js`
-- `assets/js/simple-jekyll-search.min.js`
-- `assets/js/geopattern.js`
-- `assets/js/prism.js`
-- `assets/js/mermaid.min.js`
-- `assets/js/flow.js`
-- `assets/js/raphael.min.js`
-- `assets/js/snap.svg-min.js`
-- `assets/js/underscore-min.js`
-- `assets/js/webfont.js`
-- `assets/vendor/**`
-- `assets/search_data.json`
+- 旧版 header、footer、sidebar、分享和 2D 粒子 includes
+- Primer、Octicons、Share.js、jQuery 和 jQuery UI
+- 旧搜索、Prism、Mermaid、流程图和时序图资源
+- 未使用的旧主题 CSS、截图、二维码和加载图
 
-## 删除建议
-
-1. 先在部署后的站点抽查文章、Wiki、分类、归档、评论和 404 页面。
-2. 确认不再恢复旧版搜索、仓库卡片和流程图功能。
-3. 将上述未使用资源作为一个独立提交删除，便于必要时回滚。
-4. 删除后重新执行 Pages build 和内部链接检查。
-
-本轮只记录候选项，不直接删除，避免将历史文章的隐式能力与布局拆分混在同一变更中。
+删除前 `assets/` 约为 4.7 MB，删除后约为 100 KB。历史资源仍可从 Git 记录恢复。
 
 ## 后续任务
 
@@ -79,7 +50,8 @@
 - [x] 清理各页面 front matter 中不再生效的 `comments` 字段。
 - [ ] 构建站点并确认文章、普通页面和 404 页面不再加载评论相关 CDN 资源。
 
-### P2：删除确认废弃的前端资源
+### P2：删除确认废弃的前端资源（已完成）
 
-- 按功能分批删除旧 includes、CSS、JavaScript 和 vendor 文件。
-- 每批删除后执行 Pages build 和关键页面检查。
+- [x] 删除旧 includes、CSS、JavaScript 和 vendor 文件。
+- [x] 确认当前模板和文章没有残留资源引用。
+- [ ] 通过 GitHub Actions 执行 Pages build 和关键产物检查。
