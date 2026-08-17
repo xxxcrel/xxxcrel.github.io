@@ -4,7 +4,7 @@
     <div class="profile-card__inner">
       <div class="profile-copy">
         <div class="profile-topbar">
-          <span class="profile-badge">GitHub Pages</span>
+          <a class="profile-badge" href="{{ '/' | relative_url }}">CREL / NOTES</a>
           <label class="theme-switch" aria-label="切换黑夜模式">
             <input class="theme-switch__input" type="checkbox" data-theme-toggle>
             <span class="theme-switch__track">
@@ -12,21 +12,16 @@
             </span>
           </label>
         </div>
-        <div class="profile-hero">
-          <img class="profile-avatar" src="https://github.com/{{ site.github_username }}.png?size=320" alt="{{ site.title }} avatar">
-        </div>
+        <p class="profile-kicker">PERSONAL KNOWLEDGE BASE</p>
         <h1 class="profile-name">{{ site.title }}</h1>
         <p class="profile-subtitle">{{ site.subtitle }}</p>
-        <p class="profile-description">{{ site.description }}</p>
-        <p class="profile-description">💛 一个没有技术偏见的开发者</p>
-        <p class="profile-description">🎯 目前专注于 Java 与微服务</p>
-        <p class="profile-description">⚡ 一切都会好起来的</p>
+        <p class="profile-description">记录软件工程、微服务与持续学习的思考。</p>
       </div>
 
       <div class="profile-actions" aria-label="Primary links">
-        <a class="profile-action{% if page.url == '/' %} is-active{% endif %}" href="{{ '/' | relative_url }}">首页</a>
-        <a class="profile-action{% if page.url == '/categories/' %} is-active{% endif %}" href="{{ '/categories/' | relative_url }}">分类</a>
-        <a class="profile-action{% if page.url == '/about/' %} is-active{% endif %}" href="{{ '/about/' | relative_url }}">关于</a>
+        <a class="profile-action{% if page.url == '/' %} is-active{% endif %}" href="{{ '/' | relative_url }}"><span>01</span> 首页</a>
+        <a class="profile-action{% if page.url == '/categories/' %} is-active{% endif %}" href="{{ '/categories/' | relative_url }}"><span>02</span> 分类</a>
+        <a class="profile-action{% if page.url == '/about/' %} is-active{% endif %}" href="{{ '/about/' | relative_url }}"><span>03</span> 关于</a>
       </div>
 
       <div class="profile-info-grid">

@@ -8,9 +8,7 @@
     savedTheme = null;
   }
 
-  var prefersDark = window.matchMedia &&
-    window.matchMedia("(prefers-color-scheme: dark)").matches;
-  root.setAttribute("data-theme", savedTheme || (prefersDark ? "dark" : "light"));
+  root.setAttribute("data-theme", savedTheme || "dark");
 
   document.addEventListener("DOMContentLoaded", function () {
     var toggle = document.querySelector("[data-theme-toggle]");

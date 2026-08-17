@@ -3,128 +3,87 @@ import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.m
 (function () {
   var canvas = document.getElementById("scene");
   var reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-
   if (!canvas || reducedMotion.matches) return;
 
-  var root = document.documentElement;
   var renderer;
-
   try {
-    renderer = new THREE.WebGLRenderer({
-      canvas: canvas,
-      alpha: true,
-      antialias: false,
-      powerPreference: "low-power"
-    });
-  } catch (error) {
-    return;
-  }
+    renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: false, powerPreference: "low-power" });
+  } catch (error) { return; }
 
+  var compact = window.innerWidth < 768;
+  var count = compact ? 900 : 2600;
+  var positions = new Float32Array(count * 3);
+  var colors = new Float32Array(count * 3);
+  var phases = new Float32Array(count);
+  var geometry = new THREE.BufferGeometry();
+  var material = new THREE.PointsMaterial({ size: compact ? .018 : .014, transparent: true, opacity: .68, blending: THREE.AdditiveBlending, depthWrite: false, vertexColors: true });
   var scene = new THREE.Scene();
-  var camera = new THREE.PerspectiveCamera(52, 1, 0.1, 100);
-  var group = new THREE.Group();
-  var pointer = new THREE.Vector2(0, 0);
-  var targetPointer = new THREE.Vector2(0, 0);
+  var camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 10);
+  var cloud = new THREE.Points(geometry, material);
   var clock = new THREE.Clock();
+  var pointer = new THREE.Vector2();
+  var target = new THREE.Vector2();
   var frameId = 0;
   var visible = true;
-  var isCompact = window.innerWidth < 768;
-  var particleCount = isCompact ? 260 : 620;
-  var positions = new Float32Array(particleCount * 3);
-  var colors = new Float32Array(particleCount * 3);
-  var geometry = new THREE.BufferGeometry();
-  var material = new THREE.PointsMaterial({
-    size: isCompact ? 0.026 : 0.022,
-    transparent: true,
-    opacity: 0.7,
-    blending: THREE.AdditiveBlending,
-    depthWrite: false,
-    vertexColors: true
-  });
 
-  for (var index = 0; index < particleCount; index += 1) {
-    var radius = 2.6 + Math.random() * 4.8;
-    var angle = Math.random() * Math.PI * 2;
-    var elevation = (Math.random() - 0.5) * 4.2;
+  function whalePoint(index) {
+    var t = Math.random();
+    var x;
+    var y;
+    if (t < .73) {
+      var angle = Math.random() * Math.PI * 2;
+      var radius = Math.sqrt(Math.random());
+      x = Math.cos(angle) * (0.48 + Math.random() * .14) * radius;
+      y = Math.sin(angle) * .22 * radius;
+      y += .025 * Math.sin(x * 7);
+    } else if (t < .89) {
+      x = -.48 - Math.random() * .36;
+      y = (Math.random() - .5) * (.28 + (x + .48) * -.15);
+    } else if (t < .96) {
+      x = .42 + Math.random() * .25;
+      y = -.05 - Math.random() * .18 + Math.abs(x - .54) * .35;
+    } else {
+      x = -.05 + Math.random() * .28;
+      y = -.15 - Math.random() * .25;
+    }
+    return [x, y];
+  }
+
+  for (var index = 0; index < count; index += 1) {
+    var point = whalePoint(index);
     var offset = index * 3;
-
-    positions[offset] = Math.cos(angle) * radius;
-    positions[offset + 1] = elevation;
-    positions[offset + 2] = Math.sin(angle) * radius - 1.2;
+    positions[offset] = point[0];
+    positions[offset + 1] = point[1];
+    positions[offset + 2] = (Math.random() - .5) * .08;
+    phases[index] = Math.random() * Math.PI * 2;
+    var brightness = .28 + Math.random() * .72;
+    colors[offset] = .18 * brightness;
+    colors[offset + 1] = .58 * brightness;
+    colors[offset + 2] = brightness;
   }
 
   geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
   geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
-
-  var particles = new THREE.Points(geometry, material);
-  group.add(particles);
-  scene.add(group);
-  camera.position.z = 7.5;
-
-  function updatePalette() {
-    var light = root.getAttribute("data-theme") === "light";
-    var primary = new THREE.Color(light ? 0x2a7fff : 0x73e0ff);
-    var secondary = new THREE.Color(light ? 0x0d9488 : 0xb8fff6);
-
-    for (var index = 0; index < particleCount; index += 1) {
-      var color = index % 4 === 0 ? secondary : primary;
-      var offset = index * 3;
-      colors[offset] = color.r;
-      colors[offset + 1] = color.g;
-      colors[offset + 2] = color.b;
-    }
-
-    geometry.attributes.color.needsUpdate = true;
-    material.opacity = light ? 0.38 : 0.62;
-  }
+  scene.add(cloud);
 
   function resize() {
-    var width = window.innerWidth;
-    var height = Math.max(window.innerHeight, document.documentElement.clientHeight);
-    camera.aspect = width / height;
-    camera.updateProjectionMatrix();
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isCompact ? 1.25 : 1.6));
-    renderer.setSize(width, height, false);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, compact ? 1.2 : 1.5));
+    renderer.setSize(window.innerWidth, window.innerHeight, false);
   }
-
   function render() {
     if (!visible) return;
-
     var elapsed = clock.getElapsedTime();
-    pointer.lerp(targetPointer, 0.035);
-    group.rotation.y = elapsed * 0.018 + pointer.x * 0.08;
-    group.rotation.x = Math.sin(elapsed * 0.12) * 0.025 + pointer.y * 0.04;
-    particles.rotation.z = elapsed * 0.006;
-
+    pointer.lerp(target, .025);
+    cloud.position.x = .21 + pointer.x * .025;
+    cloud.position.y = .15 + pointer.y * .018 + Math.sin(elapsed * .32) * .012;
+    cloud.rotation.z = -.13 + pointer.x * .025;
+    material.opacity = .54 + Math.sin(elapsed * .7) * .08;
+    frameId = requestAnimationFrame(render);
     renderer.render(scene, camera);
-    frameId = window.requestAnimationFrame(render);
   }
-
-  function onPointerMove(event) {
-    targetPointer.x = (event.clientX / window.innerWidth) * 2 - 1;
-    targetPointer.y = -((event.clientY / window.innerHeight) * 2 - 1);
-  }
-
-  document.addEventListener("visibilitychange", function () {
-    visible = !document.hidden;
-    window.cancelAnimationFrame(frameId);
-    if (visible) {
-      clock.getDelta();
-      render();
-    }
-  });
-
+  document.addEventListener("visibilitychange", function () { visible = !document.hidden; cancelAnimationFrame(frameId); if (visible) { clock.getDelta(); render(); } });
+  document.addEventListener("pointermove", function (event) { target.x = event.clientX / window.innerWidth * 2 - 1; target.y = -(event.clientY / window.innerHeight * 2 - 1); }, { passive: true });
   window.addEventListener("resize", resize, { passive: true });
-  window.addEventListener("pointermove", onPointerMove, { passive: true });
-  window.addEventListener("site-theme-change", updatePalette);
-  reducedMotion.addEventListener("change", function (event) {
-    if (event.matches) {
-      window.cancelAnimationFrame(frameId);
-      canvas.style.display = "none";
-    }
-  });
-
-  updatePalette();
-  resize();
-  render();
+  reducedMotion.addEventListener("change", function (event) { if (event.matches) { cancelAnimationFrame(frameId); canvas.style.display = "none"; } });
+  resize(); render();
 })();
