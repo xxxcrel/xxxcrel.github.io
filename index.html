@@ -20,7 +20,7 @@ description: 克里尔的文章与技术笔记
       <a href="{{ '/categories/' | relative_url }}#{{ cat | slugify }}">{{ cat }}</a>
       {% endfor %}
     </div>
-    <h2><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
+    <h2 class="post-item__title"><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
     <p class="post-excerpt">{{ post.excerpt | strip_html | strip_newlines | truncate: 110 }}</p>
     <div class="post-item__footer">
       <span class="tag-chip">{{ post.content | number_of_words }} WORDS</span>

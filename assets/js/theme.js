@@ -8,7 +8,10 @@
     savedTheme = null;
   }
 
-  root.setAttribute("data-theme", savedTheme || "dark");
+  if (!savedTheme) {
+    savedTheme = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+  }
+  root.setAttribute("data-theme", savedTheme);
 
   document.addEventListener("DOMContentLoaded", function () {
     var toggle = document.querySelector("[data-theme-button]");

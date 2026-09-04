@@ -1,21 +1,22 @@
 ---
 layout: default
 ---
-<section class="content-header">
+<header class="article-header">
   <span class="section-badge">Article</span>
   <h1 class="content-title">{{ page.title }}</h1>
-  <div class="meta-bar">
-    <span>{{ page.date | date: "%Y-%m-%d" }}</span>
+  <div class="article-meta">
+    <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%Y-%m-%d" }}</time>
     {% for cat in page.categories %}
     <a href="{{ '/categories/' | relative_url }}#{{ cat | slugify }}">{{ cat }}</a>
     {% endfor %}
+    <span>{{ page.content | number_of_words }} words</span>
   </div>
   {% if page.description %}
   <p class="content-intro">{{ page.description }}</p>
   {% endif %}
-</section>
+</header>
 
-<article class="content-card markdown-body">
+<article class="article-body markdown-body">
   {{ content }}
 </article>
 

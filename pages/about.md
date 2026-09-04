@@ -7,7 +7,11 @@ menu: 关于
 permalink: /about/
 ---
 
-# Be a geek
+<section class="profile-intro">
+<p class="terminal-command"><span>~</span> cat about.md</p>
+<h2>Be a geek.</h2>
+<p>克里尔的个人技术空间，记录工程实践、阅读笔记，以及持续学习的过程。</p>
+</section>
 
 ## 联系
 
@@ -15,13 +19,13 @@ permalink: /about/
 * {{ website.sitename }}：[@{{ website.name }}]({{ website.url }})
 {% endfor %}
 
-## Skill Keywords
+## Stack
 
 {% for category in site.data.skills %}
 ### {{ category.name }}
-<div class="btn-inline">
+<div class="skill-list">
 {% for keyword in category.keywords %}
-<button class="btn btn-outline" type="button">{{ keyword }}</button>
+<span>{{ keyword }}</span>
 {% endfor %}
 </div>
 {% endfor %}

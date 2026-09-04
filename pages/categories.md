@@ -7,20 +7,30 @@ menu: 分类
 permalink: /categories/
 ---
 
-<section class="container posts-content">
+{% assign category_count = site.categories | size %}
+<div class="index-summary"><span>{{ category_count }} categories</span><span>{{ site.posts | size }} entries</span></div>
+<section class="category-index">
 {% assign sorted_categories = site.categories | sort %}
 {% for category in sorted_categories %}
 {% assign category_name = category | first %}
 {% assign category_id = category_name | slugify %}
-<h3 id="{{ category_id }}">{{ category_name }}</h3>
-<ol class="posts-list">
+{% assign category_label = category_name %}
+{% case category_name %}
+{% when "powerjob" %}{% assign category_label = "PowerJob" %}
+{% when "java generic" %}{% assign category_label = "Java Generic" %}
+{% when "linux proxy" %}{% assign category_label = "Linux Proxy" %}
+{% endcase %}
+<section class="category-group" id="{{ category_id }}">
+<h2>{{ category_label }} <small>/ {{ category.last | size }}</small></h2>
+<ol class="category-posts">
 {% for post in category.last %}
-<li class="posts-list-item">
-<span class="posts-list-meta">{{ post.date | date:"%Y-%m-%d" }}</span>
-<a class="posts-list-name" href="{{ post.url | relative_url }}">{{ post.title }}</a>
+<li>
+<time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+<a href="{{ post.url | relative_url }}">{{ post.title }}</a>
 </li>
 {% endfor %}
 </ol>
+</section>
 {% endfor %}
 </section>
 <!-- /section.content -->
