@@ -59,6 +59,14 @@ subscribe_rss: /feed.xml
 markdown: kramdown
 kramdown:
     input: GFM
+    hard_wrap: false
+    auto_ids: true
+    syntax_highlighter: rouge
+    syntax_highlighter_opts:
+        block:
+            line_numbers: false
+        span:
+            line_numbers: false
 highlighter: rouge
 paginate: 10
 paginate_path: "/page:num/"
