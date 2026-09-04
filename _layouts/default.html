@@ -4,42 +4,22 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   {% seo %}
-  {% if page.sitemap == false %}
-  <meta name="robots" content="noindex, nofollow">
-  {% endif %}
+  {% if page.sitemap == false %}<meta name="robots" content="noindex, nofollow">{% endif %}
   <link rel="alternate" type="application/atom+xml" title="{{ site.title }}" href="{{ site.subscribe_rss | absolute_url }}">
   <link rel="icon" href="{{ '/favicon.ico' | relative_url }}" sizes="any">
-  <meta name="theme-color" content="#07172c">
+  <meta name="theme-color" content="#1a170f">
   <script src="{{ '/assets/js/theme.js' | relative_url }}"></script>
   <link rel="stylesheet" href="{{ '/assets/css/site.css' | relative_url }}">
 </head>
 <body>
-  <canvas id="scene" aria-hidden="true"></canvas>
-  <div class="blueprint" aria-hidden="true">
-    <span class="blueprint__orb blueprint__orb--one"></span>
-    <span class="blueprint__orb blueprint__orb--two"></span>
-    <span class="blueprint__line blueprint__line--one"></span>
-    <span class="blueprint__line blueprint__line--two"></span>
-  </div>
-  <header class="site-bar">
-    <a class="site-bar__brand" href="{{ '/' | relative_url }}" aria-label="{{ site.title }} 首页">
-      <span class="site-bar__mark" aria-hidden="true">⌁</span>
-      <span>{{ site.title }}</span><small>Notes</small>
-    </a>
-    <nav class="site-bar__actions" aria-label="站点操作">
-      <button class="locale-switch is-active" type="button" aria-current="true">中文</button>
-      <button class="locale-switch" type="button" aria-label="English version coming soon">EN</button>
-      <a class="github-link" href="https://github.com/{{ site.github_username }}" target="_blank" rel="noreferrer">GitHub</a>
-    </nav>
-  </header>
-  <div class="app-shell">
+  <div class="site-shell">
     {% include profile-card.html %}
-    <main class="content-shell">
-      <div class="content-shell__inner">
-        {{ content }}
-      </div>
-    </main>
+    <main class="content-shell" id="main-content">{{ content }}</main>
+    <footer class="site-footer">
+      <span>© {{ 'now' | date: "%Y" }} {{ site.author.name }}</span>
+      <span class="site-footer__status"><i aria-hidden="true"></i> SYSTEM ONLINE</span>
+      <a href="{{ site.subscribe_rss | relative_url }}">RSS</a>
+    </footer>
   </div>
-  <script type="module" src="{{ '/assets/js/three-background.js' | relative_url }}"></script>
 </body>
 </html>

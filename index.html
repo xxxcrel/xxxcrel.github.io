@@ -3,16 +3,19 @@ layout: default
 title: 首页
 description: 克里尔肖的文章与技术笔记
 ---
-<section class="content-header">
-  <span class="section-badge">Latest Posts</span>
-  <h2 class="content-title">文章列表</h2>
+<section class="home-intro">
+  <p class="terminal-command"><span>~</span> cat welcome.txt</p>
+  <h1>代码、系统与<br><span>持续思考。</span></h1>
+  <p>{{ site.description }}。这里记录软件工程实践、阅读笔记，以及偶尔冒出的奇怪想法。</p>
 </section>
+
+<div class="section-heading"><span>最新文章</span><span>{{ site.posts | size }} ENTRIES</span></div>
 
 <section class="post-list">
   {% for post in paginator.posts %}
   <article class="post-item">
     <div class="meta-bar">
-      <span>{{ post.date | date: "%Y-%m-%d" }}</span>
+      <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y-%m-%d" }}</time>
       {% for cat in post.categories limit: 2 %}
       <a href="{{ '/categories/' | relative_url }}#{{ cat | slugify }}">{{ cat }}</a>
       {% endfor %}
@@ -20,8 +23,8 @@ description: 克里尔肖的文章与技术笔记
     <h2><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
     <p class="post-excerpt">{{ post.excerpt | strip_html | strip_newlines | truncate: 110 }}</p>
     <div class="post-item__footer">
-      <span class="tag-chip">Post</span>
-      <a class="button-link" href="{{ post.url | relative_url }}">阅读更多</a>
+      <span class="tag-chip">{{ post.content | number_of_words }} WORDS</span>
+      <a class="button-link" href="{{ post.url | relative_url }}">继续阅读</a>
     </div>
   </article>
   {% endfor %}

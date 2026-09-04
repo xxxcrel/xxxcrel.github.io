@@ -1,6 +1,6 @@
 # 前端资源盘点
 
-盘点日期：2026-07-23
+盘点日期：2026-09-04
 
 ## 当前主渲染链
 
@@ -8,8 +8,6 @@
 
 - `assets/css/site.css`
 - `assets/js/theme.js`
-- Three.js `0.180.0`（固定版本 CDN）
-- `assets/js/three-background.js`
 - `_includes/profile-card.html`
 
 ## 内容资源
@@ -38,7 +36,7 @@
 - 检查首页、文章、分类、归档、关于和 404 页面。
 - 检查桌面端与移动端布局。
 - 检查亮色、暗色和 `prefers-reduced-motion` 模式。
-- 通过浏览器 Performance/Lighthouse 检查 Three.js 背景的帧率、CPU 和首屏影响。
+- 通过浏览器 Performance/Lighthouse 检查终端主题的可读性、对比度和首屏性能。
 - 确认 GitHub Actions 的 Pages build 成功。
 
 ### P1：移除评论功能（代码已完成）
