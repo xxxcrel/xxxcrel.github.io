@@ -21,7 +21,7 @@
   // surface has its own points; the holes are cut out in that surface's plane.
   var A = [-190, -55, 90];
   var B = [-190, -55, -110];
-  var C = [205, -48, 50];
+  var C = [135, -45, 50];
   var D = [-190, 60, 90];
   var E = [-190, 60, -110];
   var frontHoles = [[-135, -15, 23, 15], [-146, 30, 14, 10], [-25, -27, 19, 12]];
