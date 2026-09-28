@@ -47,8 +47,10 @@
       ? (isHome ? "rgba(65, 91, 142, .09)" : "rgba(65, 91, 142, .055)")
       : (isHome ? "rgba(150, 181, 243, .075)" : "rgba(150, 181, 243, .045)");
     context.lineWidth = 1;
+    context.lineCap = "round";
+    context.lineJoin = "round";
     var spacing = width < 640 ? 76 : 90;
-    var step = 18;
+    var step = 14;
 
     function warp(x, y) {
       var waveX = motion ? Math.sin(time * .00034 + y * .007 + x * .003) * .55 : 0;
@@ -57,33 +59,32 @@
         var dx = x - pointerX;
         var dy = y - pointerY;
         var distanceSquared = dx * dx + dy * dy;
-        if (distanceSquared < 90000) {
-          var distance = Math.sqrt(distanceSquared) || 1;
-          var force = Math.exp(-distanceSquared / 24000) * hover;
-          waveX += (dx / distance * 29 - dy / distance * 7) * force;
-          waveY += (dy / distance * 29 + dx / distance * 7) * force;
-        }
+        // A continuous field avoids the sharp center and cutoff of a radial push.
+        var force = Math.exp(-distanceSquared / 26000) * hover;
+        waveX += (dx * .29 - dy * .07) * force;
+        waveY += (dy * .29 + dx * .07) * force;
       }
       return [x + waveX, y + waveY];
     }
 
-    for (var x = spacing / 2; x < width + spacing; x += spacing) {
+    function strokeLine(vertical, base, end) {
+      var previous = warp(vertical ? base : -step, vertical ? -step : base);
       context.beginPath();
-      for (var y = -step, first = true; y <= height + step; y += step) {
-        var point = warp(x, y);
-        if (first) { context.moveTo(point[0], point[1]); first = false; }
-        else context.lineTo(point[0], point[1]);
+      context.moveTo(previous[0], previous[1]);
+      for (var position = 0; position <= end + step; position += step) {
+        var next = warp(vertical ? base : position, vertical ? position : base);
+        context.quadraticCurveTo(previous[0], previous[1], (previous[0] + next[0]) / 2, (previous[1] + next[1]) / 2);
+        previous = next;
       }
+      context.lineTo(previous[0], previous[1]);
       context.stroke();
     }
+
+    for (var x = spacing / 2; x < width + spacing; x += spacing) {
+      strokeLine(true, x, height);
+    }
     for (var y = spacing / 2; y < height + spacing; y += spacing) {
-      context.beginPath();
-      for (var x = -step, first = true; x <= width + step; x += step) {
-        var point = warp(x, y);
-        if (first) { context.moveTo(point[0], point[1]); first = false; }
-        else context.lineTo(point[0], point[1]);
-      }
-      context.stroke();
+      strokeLine(false, y, width);
     }
   }
 

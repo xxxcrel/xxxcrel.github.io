@@ -9,14 +9,16 @@ const script = readFileSync(join(__dirname, "../assets/js/ambient-grid.js"), "ut
 function mount({ reduced = false, hover = true, home = true } = {}) {
   let points = [];
   let strokes = 0;
+  let curves = 0;
   let nextFrame = 0;
   let theme = "dark";
   const events = {};
   const frames = new Map();
   const context = {
-    clearRect() { points = []; strokes = 0; },
+    clearRect() { points = []; strokes = 0; curves = 0; },
     setTransform() {}, beginPath() {},
     moveTo(x, y) { points.push([x, y]); },
+    quadraticCurveTo(cx, cy, x, y) { points.push([x, y]); curves++; },
     lineTo(x, y) { points.push([x, y]); },
     stroke() { strokes++; }
   };
@@ -39,7 +41,7 @@ function mount({ reduced = false, hover = true, home = true } = {}) {
   runInNewContext(script, { document, window });
   return {
     canvas, context, events, frames, document,
-    points() { return points; }, strokes() { return strokes; },
+    points() { return points; }, strokes() { return strokes; }, curves() { return curves; },
     frame(time) {
       const next = frames.entries().next().value;
       if (!next) return;
@@ -56,6 +58,8 @@ test("the full-viewport grid bends near the pointer and stays behind content", (
   assert.equal(grid.canvas.style.pointerEvents, "none");
   assert.equal(grid.canvas.width, 1920);
   assert.ok(grid.strokes() > 20);
+  assert.ok(grid.curves() > grid.strokes() * 10);
+  assert.equal(grid.context.lineCap, "round");
   assert.equal(grid.frames.size, 1);
 
   grid.frame(100);

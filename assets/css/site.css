@@ -117,7 +117,7 @@ button { font: inherit; }
   display: flex;
   align-items: center;
   gap: 18px;
-  width: min(calc(100% - 32px), 1000px);
+  width: min(calc(100% - 48px), var(--site-width));
   padding: 7px 14px;
   border: 1px solid var(--border);
   border-radius: 999px;
@@ -348,7 +348,6 @@ button { font: inherit; }
     display: grid;
     grid-template-columns: 1fr auto;
     gap: 4px 10px;
-    width: min(calc(100% - 20px), 600px);
     padding: 9px 12px 4px;
     border-radius: 17px;
   }
@@ -358,6 +357,7 @@ button { font: inherit; }
 }
 @media (max-width: 620px) {
   .site-shell { width: min(calc(100% - 32px), var(--site-width)); }
+  .terminal-header.is-scrolled { width: min(calc(100% - 32px), var(--site-width)); }
   .terminal-header { padding-top: 18px; }
   .terminal-logo__badge, .theme-button__label { display: none; }
   .terminal-header__tools { gap: 7px; }
