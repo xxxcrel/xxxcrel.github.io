@@ -35,7 +35,9 @@ jobs:
           test -s _site/index.html
           test -s _site/404.html
           test -s _site/assets/css/site.css
+          test -s _site/assets/images/cheese-mark.svg
           test -s _site/assets/js/theme.js
           test -s _site/assets/js/code-copy.js
           test -s _site/assets/js/cheese-particles.js
           test -s _site/assets/js/header.js
+          test -s _site/assets/js/ambient-grid.js

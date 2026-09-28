@@ -7,21 +7,24 @@
   {% if page.sitemap == false %}<meta name="robots" content="noindex, nofollow">{% endif %}
   <link rel="alternate" type="application/atom+xml" title="{{ site.title }}" href="{{ site.subscribe_rss | absolute_url }}">
   <link rel="icon" href="{{ '/favicon.ico' | relative_url }}" sizes="any">
+  <link rel="icon" href="{{ '/assets/images/cheese-mark.svg' | relative_url }}" type="image/svg+xml">
   <meta name="theme-color" content="#0b1020">
   <script src="{{ '/assets/js/theme.js' | relative_url }}"></script>
   <link rel="stylesheet" href="{{ '/assets/css/site.css' | relative_url }}?v={{ site.time | date: '%Y%m%d%H%M%S' }}">
 </head>
 <body>
+  <canvas class="ambient-grid" data-ambient-grid aria-hidden="true"></canvas>
   <div class="site-shell">
     <div class="site-header-slot" data-header-slot>{% include profile-card.html %}</div>
     <main class="content-shell" id="main-content">{{ content }}</main>
     <footer class="site-footer">
-      <span>© {{ 'now' | date: "%Y" }} {{ site.author.name }}</span>
+      <span>© {{ 'now' | date: "%Y" }} {{ site.github_username | upcase }}</span>
       <span class="site-footer__status"><i aria-hidden="true"></i> 站点在线</span>
       <a href="{{ site.subscribe_rss | relative_url }}">RSS</a>
     </footer>
   </div>
   <script src="{{ '/assets/js/code-copy.js' | relative_url }}"></script>
   <script src="{{ '/assets/js/header.js' | relative_url }}?v={{ site.time | date: '%Y%m%d%H%M%S' }}" defer></script>
+  <script src="{{ '/assets/js/ambient-grid.js' | relative_url }}?v={{ site.time | date: '%Y%m%d%H%M%S' }}" defer></script>
 </body>
 </html>
