@@ -27,8 +27,8 @@ jobs:
           JEKYLL_ENV: production
         run: bundle exec jekyll build --strict_front_matter
 
-      - name: Check particle animation
-        run: node --test _tests/cheese-particles.test.cjs
+      - name: Check interactions
+        run: node --test _tests/*.test.cjs
 
       - name: Check generated entry points
         run: |
@@ -38,3 +38,4 @@ jobs:
           test -s _site/assets/js/theme.js
           test -s _site/assets/js/code-copy.js
           test -s _site/assets/js/cheese-particles.js
+          test -s _site/assets/js/header.js

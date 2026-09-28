@@ -17,10 +17,13 @@ function mount({ width = 520, height = 420, reduced = false, ratio = 1, staleSty
   let observer;
   let onMotionChange;
   let onResize;
+  let arcs = [];
+  let fills = [];
 
   const context = {
-    clearRect() {}, save() {}, restore() {}, translate() {}, rotate() {}, scale() {}, setTransform() {}, beginPath() {}, arc() {},
-    fill() { drawn++; colors.add(this.fillStyle); }
+    clearRect() { arcs = []; fills = []; }, save() {}, restore() {}, translate() {}, rotate() {}, scale() {}, setTransform() {}, beginPath() {},
+    arc(x, y, radius) { arcs.push([x, y, radius]); }, stroke() {},
+    fill() { drawn++; colors.add(this.fillStyle); fills.push([arcs.at(-1)[0], arcs.at(-1)[1], this.fillStyle]); }
   };
   const scene = {
     style: {},
@@ -59,8 +62,18 @@ function mount({ width = 520, height = 420, reduced = false, ratio = 1, staleSty
   runInNewContext(script, { document, window, IntersectionObserver, ResizeObserver, Math });
   return {
     canvas, classes, colors, document, events, frames, motion, scene,
+    arcs() { return arcs; },
+    fills() { return fills; },
     drawn() { return drawn; },
     resize() { onResize(); },
+    frame(time) {
+      const next = frames.entries().next().value;
+      if (!next) return;
+      frames.delete(next[0]);
+      next[1](time);
+    },
+    pointer(x, y, pointerType = "mouse") { events["scene:pointermove"]({ clientX: x, clientY: y, pointerType }); },
+    leave() { events["scene:pointerleave"](); },
     inView(value) { observer([{ isIntersecting: value }]); },
     setTheme(value) { theme = value; events["window:site-theme-change"](); },
     setReduced(value) { motion.matches = value; onMotionChange(); }
@@ -69,7 +82,10 @@ function mount({ width = 520, height = 420, reduced = false, ratio = 1, staleSty
 
 test("renders a particle cheese and pauses when it leaves the viewport", () => {
   const page = mount();
-  assert.ok(page.drawn() > 1500);
+  assert.ok(page.drawn() > 2400);
+  assert.ok(["#ffd788", "#ffb65c", "#e69a4e"].every(color => page.colors.has(color)));
+  const sizes = page.arcs().map(arc => arc[2]);
+  assert.ok(Math.max(...sizes) > Math.min(...sizes) * 2);
   assert.ok(page.classes.has("is-ready"));
   assert.equal(page.frames.size, 1);
   page.inView(false);
@@ -86,6 +102,68 @@ test("keeps the page height stable when a browser has cached the previous styles
   const initialHeight = page.scene.getBoundingClientRect().height;
   for (let i = 0; i < 10; i++) page.resize();
   assert.ok(page.scene.getBoundingClientRect().height <= initialHeight + 1);
+});
+
+test("mouse movement rotates the front and top surfaces in three dimensions", () => {
+  const left = mount();
+  const right = mount();
+  left.pointer(20, 210);
+  right.pointer(500, 210);
+  for (let i = 0; i < 26; i++) {
+    left.frame(100 + i * 40);
+    right.frame(100 + i * 40);
+  }
+  function surfaceGap(page) {
+    function center(color) {
+      const dots = page.fills().filter(dot => dot[2] === color);
+      return dots.reduce((sum, dot) => sum + dot[0], 0) / dots.length;
+    }
+    return center("#ffb65c") - center("#ffd788");
+  }
+  assert.ok(Math.abs(surfaceGap(left) - surfaceGap(right)) > 8);
+});
+
+test("mouse movement opens a local ripple that settles after leaving", () => {
+  const page = mount();
+  const control = mount();
+  page.frame(100);
+  control.frame(100);
+  const idle = page.arcs();
+  page.pointer(260, 205);
+  for (let i = 0; i < 15; i++) {
+    page.frame(150 + i * 40);
+    control.frame(150 + i * 40);
+  }
+  const hovered = page.arcs();
+  assert.equal(hovered.length, idle.length + 2);
+  assert.ok(hovered.slice(0, idle.length).some((arc, index) => Math.hypot(arc[0] - idle[index][0], arc[1] - idle[index][1]) > 8));
+
+  page.leave();
+  for (let i = 0; i < 60; i++) {
+    page.frame(800 + i * 40);
+    control.frame(800 + i * 40);
+  }
+  const settled = page.arcs();
+  const untouched = control.arcs();
+  assert.equal(settled.length, untouched.length);
+  function bounds(arcs) {
+    return [Math.min(...arcs.map(arc => arc[0])), Math.max(...arcs.map(arc => arc[0])),
+      Math.min(...arcs.map(arc => arc[1])), Math.max(...arcs.map(arc => arc[1]))];
+  }
+  assert.ok(bounds(settled).every((value, index) => Math.abs(value - bounds(untouched)[index]) < 3));
+});
+
+test("touch and reduced-motion users do not get a mouse ripple", () => {
+  const page = mount({ reduced: true });
+  page.pointer(260, 205);
+  assert.equal(page.frames.size, 0);
+  page.setTheme("light");
+  assert.equal(page.arcs().length, page.drawn() / 2);
+
+  const touch = mount();
+  touch.pointer(260, 205, "touch");
+  touch.frame(100);
+  assert.equal(touch.arcs().length, touch.drawn() / 2);
 });
 
 test("reduces detail on small screens and keeps a still image for reduced motion", () => {

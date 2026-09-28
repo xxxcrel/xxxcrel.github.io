@@ -13,17 +13,18 @@ description: 克里尔的文章与技术笔记
       <a class="button-link button-link--ghost" href="{{ '/about/' | relative_url }}">关于我 <span aria-hidden="true">→</span></a>
     </div>
   </div>
-  <div class="cheese-scene" role="img" aria-label="由暖金色粒子组成的奶酪切片">
-    <svg class="cheese-scene__fallback" viewBox="-225 -165 460 255" aria-hidden="true">
-      <path d="M -205,-50 55,-140 210,-63 Z" fill="#ffc966"/>
-      <path d="M -205,-50 210,-63 -205,60 Z" fill="#e9983f"/>
+  <div class="cheese-scene" role="img" aria-label="可随鼠标转动的三维奶酪粒子">
+    <svg class="cheese-scene__fallback" viewBox="-265 -155 500 270" aria-hidden="true">
+      <path d="M -235,-95 -200,-50 -200,60 -235,22 Z" fill="#cc853e"/>
+      <path d="M -235,-95 -200,-50 210,-42 Z" fill="#ffc966"/>
+      <path d="M -200,-50 210,-42 -200,60 Z" fill="#e9983f"/>
       <g fill="#0b1020" opacity=".75">
-        <ellipse cx="-50" cy="-76" rx="17" ry="7"/><ellipse cx="65" cy="-103" rx="25" ry="11"/><ellipse cx="145" cy="-80" rx="12" ry="6"/>
+        <ellipse cx="-140" cy="-69" rx="14" ry="7"/><ellipse cx="-215" cy="-14" rx="8" ry="12"/>
         <ellipse cx="-145" cy="-16" rx="22" ry="14"/><ellipse cx="-152" cy="28" rx="14" ry="10"/><ellipse cx="-22" cy="-27" rx="18" ry="11"/>
       </g>
     </svg>
     <canvas data-cheese-particles aria-hidden="true"></canvas>
-    <span class="cheese-scene__label" aria-hidden="true">CHEESE <span>/ PARTICLE STUDY 001</span></span>
+    <span class="cheese-scene__label" aria-hidden="true">CHEESE <span>/ MOVE TO INTERACT</span></span>
   </div>
 </section>
 
@@ -73,4 +74,4 @@ description: 克里尔的文章与技术笔记
   {% endif %}
 </nav>
 {% endif %}
-<script src="{{ '/assets/js/cheese-particles.js' | relative_url }}" defer></script>
+<script src="{{ '/assets/js/cheese-particles.js' | relative_url }}?v={{ site.time | date: '%Y%m%d%H%M%S' }}" defer></script>

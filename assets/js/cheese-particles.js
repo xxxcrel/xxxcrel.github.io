@@ -7,42 +7,48 @@
   if (!context) return;
 
   var scene = canvas.parentElement;
-  // Keep the canvas out of layout even if HTML arrives before a fresh stylesheet.
-  // Otherwise its intrinsic height enlarges the scene, which ResizeObserver
-  // feeds back into canvas.height on every callback.
+  // The canvas must not contribute to its own measured size: an older cached
+  // stylesheet otherwise creates a ResizeObserver / intrinsic-height loop.
   scene.style.position = "relative";
   canvas.style.position = "absolute";
   canvas.style.inset = "0";
   canvas.style.width = "100%";
   canvas.style.height = "100%";
   canvas.style.display = "block";
+
   var reducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)");
-  var top = [[-205, -50], [55, -140], [210, -63]];
-  var front = [[-205, -50], [210, -63], [-205, 60]];
-  var faces = [
-    { name: "top", polygon: top, holes: [[-50, -76, 17, 7], [65, -103, 25, 11], [145, -80, 12, 6]], count: 760 },
-    { name: "front", polygon: front, holes: [[-145, -16, 22, 14], [-152, 28, 14, 10], [-22, -27, 18, 11]], count: 820 }
-  ];
+  // A wedge with a thick left edge and a single tip on the right. Each visible
+  // surface has its own points; the holes are cut out in that surface's plane.
+  var A = [-190, -55, 90];
+  var B = [-190, -55, -110];
+  var C = [205, -48, 50];
+  var D = [-190, 60, 90];
+  var E = [-190, 60, -110];
+  var frontHoles = [[-135, -15, 23, 15], [-146, 30, 14, 10], [-25, -27, 19, 12]];
+  var topHoles = [[-113, -6, 22, 19], [-36, 14, 20, 15], [70, 33, 18, 10]];
+  var sideHoles = [[-5, -12, 17, 14], [29, 26, 13, 9]];
   var points = [];
   var width = 0;
   var height = 0;
   var frameId = 0;
   var lastFrame = 0;
   var visible = !window.IntersectionObserver;
+  var baseYaw = .38;
+  var basePitch = .5;
+  var yaw = baseYaw;
+  var pitch = basePitch;
+  var targetYaw = baseYaw;
+  var targetPitch = basePitch;
   var offsetX = 0;
   var offsetY = 0;
   var targetX = 0;
   var targetY = 0;
-
-  function insidePolygon(x, y, polygon) {
-    var inside = false;
-    for (var i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-      var a = polygon[i];
-      var b = polygon[j];
-      if ((a[1] > y) !== (b[1] > y) && x < (b[0] - a[0]) * (y - a[1]) / (b[1] - a[1]) + a[0]) inside = !inside;
-    }
-    return inside;
-  }
+  var pointerX = 0;
+  var pointerY = 0;
+  var targetPointerX = 0;
+  var targetPointerY = 0;
+  var hover = 0;
+  var targetHover = 0;
 
   function inHole(x, y, holes) {
     return holes.some(function (hole) {
@@ -52,87 +58,169 @@
     });
   }
 
+  function frontZ(x) { return A[2] + (C[2] - A[2]) * (x - A[0]) / (C[0] - A[0]); }
+  function topY(x) { return A[1] + (C[1] - A[1]) * (x - A[0]) / (C[0] - A[0]); }
+
   function createPoints() {
-    // A fixed seed keeps the cheese stable across resizes and theme changes.
     var seed = 271828;
     function random() {
       seed = (Math.imul(seed, 1664525) + 1013904223) | 0;
       return (seed >>> 0) / 4294967296;
     }
-    function add(x, y, face, opacity) {
-      points.push({ x: x, y: y, face: face, opacity: opacity, radius: .55 + random() * 1.05, phase: random() * Math.PI * 2 });
+    function add(x, y, z, face, opacity) {
+      points.push({ x: x, y: y, z: z, face: face, opacity: opacity, radius: .65 + random() * 1.15, phase: random() * Math.PI * 2 });
+    }
+    function triangle(a, b, c, count, face, holes, coordinates) {
+      var added = 0;
+      while (added < Math.round(count * density)) {
+        var root = Math.sqrt(random());
+        var split = random();
+        var u = 1 - root;
+        var v = root * (1 - split);
+        var w = root * split;
+        var x = u * a[0] + v * b[0] + w * c[0];
+        var y = u * a[1] + v * b[1] + w * c[1];
+        var z = u * a[2] + v * b[2] + w * c[2];
+        if (holes && inHole(x, coordinates === "top" ? z : y, holes)) continue;
+        add(x, y, z, face, .36 + random() * .56);
+        added++;
+      }
+    }
+    function edge(a, b) {
+      var length = Math.hypot(b[0] - a[0], b[1] - a[1], b[2] - a[2]);
+      var steps = Math.ceil(length / (width < 480 ? 8 : 5));
+      for (var i = 0; i < steps; i++) {
+        var t = i / steps;
+        add(a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t, "edge", .63 + random() * .35);
+      }
     }
 
     points = [];
-    var density = width < 480 ? .52 : 1;
-    faces.forEach(function (face) {
-      var target = Math.round(face.count * density);
-      var bounds = face.polygon.reduce(function (box, vertex) {
-        return [Math.min(box[0], vertex[0]), Math.min(box[1], vertex[1]), Math.max(box[2], vertex[0]), Math.max(box[3], vertex[1])];
-      }, [Infinity, Infinity, -Infinity, -Infinity]);
-      var added = 0;
-      while (added < target) {
-        var x = bounds[0] + random() * (bounds[2] - bounds[0]);
-        var y = bounds[1] + random() * (bounds[3] - bounds[1]);
-        if (!insidePolygon(x, y, face.polygon) || inHole(x, y, face.holes)) continue;
-        add(x, y, face.name, .35 + random() * .58);
-        added++;
+    var density = width < 480 ? .55 : 1;
+    triangle(B, E, C, 160, "back");
+    triangle(D, C, E, 180, "bottom");
+    triangle(A, C, D, 1000, "front", frontHoles, "front");
+    triangle(A, B, C, 1250, "top", topHoles, "top");
+    for (var i = 0; i < 410 * density; i++) {
+      var z = -110 + random() * 200;
+      var y = -55 + random() * 115;
+      if (!inHole(z, y, sideHoles)) add(-190, y, z, "side", .38 + random() * .55);
+    }
+
+    [[A, B], [B, C], [C, A], [A, D], [D, C], [D, E], [E, B], [C, E]].forEach(function (pair) { edge(pair[0], pair[1]); });
+    frontHoles.forEach(function (hole) {
+      for (var i = 0, count = width < 480 ? 27 : 43; i < count; i++) {
+        var angle = i / count * Math.PI * 2;
+        var x = hole[0] + Math.cos(angle) * hole[2];
+        var y = hole[1] + Math.sin(angle) * hole[3];
+        add(x, y, frontZ(x) + 1, "edge", .7 + random() * .25);
+        if (i % 2 === 0) add(hole[0] + Math.cos(angle) * hole[2] * .78, hole[1] + Math.sin(angle) * hole[3] * .78, frontZ(x) - 9, "cavity", .25);
       }
-
-      face.polygon.forEach(function (point, index) {
-        var next = face.polygon[(index + 1) % face.polygon.length];
-        var steps = Math.hypot(next[0] - point[0], next[1] - point[1]) / (width < 480 ? 8 : 5);
-        for (var i = 0; i < steps; i++) {
-          var progress = i / steps;
-          add(point[0] + (next[0] - point[0]) * progress, point[1] + (next[1] - point[1]) * progress, "rim", .58 + random() * .4);
-        }
-      });
-      face.holes.forEach(function (hole) {
-        var steps = Math.ceil(Math.PI * (hole[2] + hole[3]) / (width < 480 ? 6 : 4));
-        for (var i = 0; i < steps; i++) {
-          var angle = (i + random() * .3) / steps * Math.PI * 2;
-          add(hole[0] + Math.cos(angle) * hole[2], hole[1] + Math.sin(angle) * hole[3], "rim", .55 + random() * .4);
-        }
-      });
     });
-
-    for (var i = 0; i < 75 * density; i++) {
-      var x = -280 + random() * 570;
-      var y = -185 + random() * 355;
-      if (!insidePolygon(x, y, top) && !insidePolygon(x, y, front)) add(x, y, "dust", .1 + random() * .25);
+    topHoles.forEach(function (hole) {
+      for (var i = 0, count = width < 480 ? 28 : 44; i < count; i++) {
+        var angle = i / count * Math.PI * 2;
+        var x = hole[0] + Math.cos(angle) * hole[2];
+        var z = hole[1] + Math.sin(angle) * hole[3];
+        add(x, topY(x) - 1, z, "edge", .7 + random() * .25);
+        if (i % 2 === 0) add(hole[0] + Math.cos(angle) * hole[2] * .78, topY(x) + 10, hole[1] + Math.sin(angle) * hole[3] * .78, "cavity", .25);
+      }
+    });
+    sideHoles.forEach(function (hole) {
+      for (var i = 0, count = width < 480 ? 23 : 36; i < count; i++) {
+        var angle = i / count * Math.PI * 2;
+        add(-191, hole[1] + Math.sin(angle) * hole[3], hole[0] + Math.cos(angle) * hole[2], "edge", .7 + random() * .25);
+      }
+    });
+    for (var i = 0; i < 65 * density; i++) {
+      add(-265 + random() * 540, -165 + random() * 300, -120 + random() * 240, "dust", .09 + random() * .24);
     }
   }
 
   function draw(time) {
     if (!width || !height) return;
+    var still = reducedMotion && reducedMotion.matches;
     var light = document.documentElement.getAttribute("data-theme") === "light";
     var colors = light
-      ? { top: "#a9600e", front: "#b96e21", rim: "#92500a", dust: "#a66e36" }
-      : { top: "#ffd788", front: "#ffb65c", rim: "#ffe4a4", dust: "#ffbd71" };
-    var still = reducedMotion && reducedMotion.matches;
+      ? { front: "#b96e21", top: "#a9600e", side: "#8d4b16", bottom: "#95521b", back: "#9c6128", edge: "#7d410c", cavity: "#683b1b", dust: "#a66e36" }
+      : { front: "#ffb65c", top: "#ffd788", side: "#e69a4e", bottom: "#b97439", back: "#b6865b", edge: "#ffe4a4", cavity: "#ae6936", dust: "#ffbd71" };
+    var scale = Math.min(width / 510, height / 365);
+    var radius = Math.min(72, width * .16);
 
     context.clearRect(0, 0, width, height);
-    context.save();
-    offsetX += (targetX - offsetX) * .06;
-    offsetY += (targetY - offsetY) * .06;
-    context.translate(width * .5 + offsetX, height * .49 + offsetY);
-    context.scale(Math.min(width / 500, height / 390), Math.min(width / 500, height / 390));
     if (!still) {
-      context.translate(0, Math.sin(time * .0007) * 5);
-      context.rotate(Math.sin(time * .00028) * .024);
+      yaw += (targetYaw + Math.sin(time * .0003) * .045 - yaw) * .07;
+      pitch += (targetPitch + Math.sin(time * .00026) * .025 - pitch) * .07;
+      offsetX += (targetX - offsetX) * .06;
+      offsetY += (targetY - offsetY) * .06;
+      pointerX += (targetPointerX - pointerX) * .2;
+      pointerY += (targetPointerY - pointerY) * .2;
+      hover += (targetHover - hover) * .14;
     }
 
-    points.forEach(function (point) {
+    var cosY = Math.cos(yaw);
+    var sinY = Math.sin(yaw);
+    var cosP = Math.cos(pitch);
+    var sinP = Math.sin(pitch);
+    var floatY = still ? 0 : Math.sin(time * .0007) * 4;
+    var projected = points.map(function (point) {
+      var x = point.x * cosY + point.z * sinY;
+      var z = point.z * cosY - point.x * sinY;
+      var y = point.y * cosP + z * sinP;
+      var depth = z * cosP - point.y * sinP;
+      var perspective = 680 / (680 - depth);
+      return {
+        x: width * .5 + offsetX + x * perspective * scale,
+        y: height * .49 + offsetY + floatY + y * perspective * scale,
+        depth: depth,
+        size: perspective * scale * point.radius,
+        point: point
+      };
+    });
+    projected.sort(function (a, b) { return a.depth - b.depth; });
+
+    projected.forEach(function (item) {
+      var point = item.point;
+      var drift = still ? 0 : Math.sin(time * .0008 + point.phase) * (point.face === "dust" ? 2 : .5);
+      var x = item.x + drift;
+      var y = item.y + drift * .6;
       var shimmer = still ? 1 : .87 + .13 * Math.sin(time * .0017 + point.phase);
-      var drift = still ? 0 : Math.sin(time * .0008 + point.phase) * (point.face === "dust" ? 2.5 : .75);
-      context.globalAlpha = point.opacity * shimmer;
+      var opacity = point.opacity * shimmer * Math.min(1.15, .78 + (item.depth + 90) / 420);
+      if (!still && hover > .002 && point.face !== "dust") {
+        var dx = x - pointerX;
+        var dy = y - pointerY;
+        var distance = Math.hypot(dx, dy);
+        if (distance < radius * 1.5) {
+          var push = radius * .43 * hover * Math.exp(-distance * distance / (radius * radius * .45));
+          if (distance > .01) {
+            x += dx / distance * push;
+            y += dy / distance * push;
+          }
+          opacity *= 1 - .78 * hover * Math.exp(-distance * distance / (radius * radius * .22));
+        }
+      }
+      context.globalAlpha = Math.min(1, opacity);
       context.fillStyle = colors[point.face];
       context.beginPath();
-      context.arc(point.x + drift, point.y + drift * .6, point.radius, 0, Math.PI * 2);
+      context.arc(x, y, item.size, 0, Math.PI * 2);
       context.fill();
     });
 
-    context.restore();
+    if (!still && hover > .01) {
+      context.strokeStyle = light ? "#a9600e" : "#ffce84";
+      context.shadowColor = light ? "#c47b29" : "#ffd78e";
+      context.shadowBlur = 12;
+      context.lineWidth = 1.4;
+      context.globalAlpha = hover * .58;
+      context.beginPath();
+      context.arc(pointerX, pointerY, radius * .72 + Math.sin(time * .002) * 2, 0, Math.PI * 2);
+      context.stroke();
+      context.shadowBlur = 0;
+      context.globalAlpha = hover * .2;
+      context.beginPath();
+      context.arc(pointerX, pointerY, radius + Math.sin(time * .0015) * 3, 0, Math.PI * 2);
+      context.stroke();
+    }
     context.globalAlpha = 1;
   }
 
@@ -190,14 +278,30 @@
   scene.addEventListener("pointermove", function (event) {
     if (event.pointerType !== "mouse" || (reducedMotion && reducedMotion.matches)) return;
     var bounds = scene.getBoundingClientRect();
-    targetX = (event.clientX - bounds.left - bounds.width / 2) * .045;
-    targetY = (event.clientY - bounds.top - bounds.height / 2) * .045;
+    var nx = (event.clientX - bounds.left) / bounds.width * 2 - 1;
+    var ny = (event.clientY - bounds.top) / bounds.height * 2 - 1;
+    targetYaw = baseYaw + nx * .48;
+    targetPitch = basePitch - ny * .28;
+    targetX = nx * 9;
+    targetY = ny * 7;
+    targetPointerX = event.clientX - bounds.left;
+    targetPointerY = event.clientY - bounds.top;
+    targetHover = 1;
   });
-  scene.addEventListener("pointerleave", function () { targetX = targetY = 0; });
+  scene.addEventListener("pointerleave", function () {
+    targetYaw = baseYaw;
+    targetPitch = basePitch;
+    targetX = targetY = targetHover = 0;
+  });
   if (reducedMotion) {
     var onMotionChange = function () {
-      if (reducedMotion.matches) { stop(); draw(0); }
-      else start();
+      if (reducedMotion.matches) {
+        stop();
+        yaw = targetYaw = baseYaw;
+        pitch = targetPitch = basePitch;
+        offsetX = offsetY = targetX = targetY = targetHover = hover = 0;
+        draw(0);
+      } else start();
     };
     if (reducedMotion.addEventListener) reducedMotion.addEventListener("change", onMotionChange);
     else reducedMotion.addListener(onMotionChange);

@@ -13,7 +13,7 @@
 </head>
 <body>
   <div class="site-shell">
-    {% include profile-card.html %}
+    <div class="site-header-slot" data-header-slot>{% include profile-card.html %}</div>
     <main class="content-shell" id="main-content">{{ content }}</main>
     <footer class="site-footer">
       <span>© {{ 'now' | date: "%Y" }} {{ site.author.name }}</span>
@@ -22,5 +22,6 @@
     </footer>
   </div>
   <script src="{{ '/assets/js/code-copy.js' | relative_url }}"></script>
+  <script src="{{ '/assets/js/header.js' | relative_url }}?v={{ site.time | date: '%Y%m%d%H%M%S' }}" defer></script>
 </body>
 </html>
