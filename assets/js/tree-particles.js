@@ -1,14 +1,14 @@
 (function () {
   "use strict";
 
-  var canvas = document.querySelector("[data-cheese-particles]");
+  var canvas = document.querySelector("[data-tree-particles]");
   if (!canvas || !canvas.getContext) return;
   var context = canvas.getContext("2d");
   if (!context) return;
 
   var scene = canvas.parentElement;
-  // The canvas must not contribute to its own measured size: an older cached
-  // stylesheet otherwise creates a ResizeObserver / intrinsic-height loop.
+  // An absolutely positioned canvas cannot feed its intrinsic height back into
+  // the measured scene when a browser has cached an older stylesheet.
   scene.style.position = "relative";
   canvas.style.position = "absolute";
   canvas.style.inset = "0";
@@ -17,24 +17,19 @@
   canvas.style.display = "block";
 
   var reducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)");
-  // A wedge with a thick left edge and a single tip on the right. Each visible
-  // surface has its own points; the holes are cut out in that surface's plane.
-  var A = [-190, -55, 90];
-  var B = [-190, -55, -110];
-  var C = [135, -45, 50];
-  var D = [-190, 60, 90];
-  var E = [-190, 60, -110];
-  var frontHoles = [[-135, -15, 23, 15], [-146, 30, 14, 10], [-25, -27, 19, 12]];
-  var topHoles = [[-113, -6, 22, 19], [-36, 14, 20, 15], [70, 33, 18, 10]];
-  var sideHoles = [[-5, -12, 17, 14], [29, 26, 13, 9]];
+  var layers = [
+    { tip: -148, base: -18, radius: 55, count: 700, face: "crown" },
+    { tip: -100, base: 57, radius: 88, count: 1020, face: "middle" },
+    { tip: -46, base: 121, radius: 124, count: 1380, face: "lower" }
+  ];
   var points = [];
   var width = 0;
   var height = 0;
   var frameId = 0;
   var lastFrame = 0;
   var visible = !window.IntersectionObserver;
-  var baseYaw = .38;
-  var basePitch = .5;
+  var baseYaw = .28;
+  var basePitch = .12;
   var yaw = baseYaw;
   var pitch = basePitch;
   var targetYaw = baseYaw;
@@ -50,16 +45,12 @@
   var hover = 0;
   var targetHover = 0;
 
-  function inHole(x, y, holes) {
-    return holes.some(function (hole) {
-      var dx = (x - hole[0]) / hole[2];
-      var dy = (y - hole[1]) / hole[3];
-      return dx * dx + dy * dy < 1;
-    });
+  function foliageRadius(y) {
+    return layers.reduce(function (radius, layer) {
+      if (y < layer.tip || y > layer.base) return radius;
+      return Math.max(radius, layer.radius * (y - layer.tip) / (layer.base - layer.tip));
+    }, 0);
   }
-
-  function frontZ(x) { return A[2] + (C[2] - A[2]) * (x - A[0]) / (C[0] - A[0]); }
-  function topY(x) { return A[1] + (C[1] - A[1]) * (x - A[0]) / (C[0] - A[0]); }
 
   function createPoints() {
     var seed = 271828;
@@ -67,73 +58,74 @@
       seed = (Math.imul(seed, 1664525) + 1013904223) | 0;
       return (seed >>> 0) / 4294967296;
     }
-    function add(x, y, z, face, opacity) {
-      points.push({ x: x, y: y, z: z, face: face, opacity: opacity, radius: .65 + random() * 1.15, phase: random() * Math.PI * 2 });
-    }
-    function triangle(a, b, c, count, face, holes, coordinates) {
-      var added = 0;
-      while (added < Math.round(count * density)) {
-        var root = Math.sqrt(random());
-        var split = random();
-        var u = 1 - root;
-        var v = root * (1 - split);
-        var w = root * split;
-        var x = u * a[0] + v * b[0] + w * c[0];
-        var y = u * a[1] + v * b[1] + w * c[1];
-        var z = u * a[2] + v * b[2] + w * c[2];
-        if (holes && inHole(x, coordinates === "top" ? z : y, holes)) continue;
-        add(x, y, z, face, .36 + random() * .56);
-        added++;
-      }
-    }
-    function edge(a, b) {
-      var length = Math.hypot(b[0] - a[0], b[1] - a[1], b[2] - a[2]);
-      var steps = Math.ceil(length / (width < 480 ? 8 : 5));
-      for (var i = 0; i < steps; i++) {
-        var t = i / steps;
-        add(a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t, "edge", .63 + random() * .35);
-      }
+    function add(x, y, z, face, opacity, size) {
+      points.push({ x: x, y: y, z: z, face: face, opacity: opacity, radius: size || .65 + random() * 1.15, phase: random() * Math.PI * 2 });
     }
 
     points = [];
     var density = width < 480 ? .55 : 1;
-    triangle(B, E, C, 160, "back");
-    triangle(D, C, E, 180, "bottom");
-    triangle(A, C, D, 1000, "front", frontHoles, "front");
-    triangle(A, B, C, 1250, "top", topHoles, "top");
-    for (var i = 0; i < 410 * density; i++) {
-      var z = -110 + random() * 200;
-      var y = -55 + random() * 115;
-      if (!inHole(z, y, sideHoles)) add(-190, y, z, "side", .38 + random() * .55);
+    // Three uneven cones give the tree a layered silhouette at every angle.
+    layers.forEach(function (layer, index) {
+      for (var i = 0; i < layer.count * density; i++) {
+        var t = Math.sqrt(random());
+        var angle = random() * Math.PI * 2;
+        var y = layer.tip + (layer.base - layer.tip) * t;
+        var branches = .91 + random() * .14 + Math.sin(angle * 9 + y * .065) * .035;
+        var radius = layer.radius * t * branches;
+        add(Math.cos(angle) * radius, y, Math.sin(angle) * radius, layer.face, .42 + random() * .55);
+      }
+      for (var j = 0, count = Math.round(110 * density); j < count; j++) {
+        var angle = j / count * Math.PI * 2;
+        var radius = layer.radius * (.92 + .07 * Math.sin(angle * 8 + index));
+        add(Math.cos(angle) * radius, layer.base - random() * 6, Math.sin(angle) * radius, layer.face, .57 + random() * .35);
+      }
+    });
+
+    for (var i = 0; i < 240 * density; i++) {
+      var angle = random() * Math.PI * 2;
+      var y = 115 + random() * 45;
+      var radius = 14 + random() * 5;
+      add(Math.cos(angle) * radius, y, Math.sin(angle) * radius, "trunk", .45 + random() * .45);
     }
 
-    [[A, B], [B, C], [C, A], [A, D], [D, C], [D, E], [E, B], [C, E]].forEach(function (pair) { edge(pair[0], pair[1]); });
-    frontHoles.forEach(function (hole) {
-      for (var i = 0, count = width < 480 ? 27 : 43; i < count; i++) {
-        var angle = i / count * Math.PI * 2;
-        var x = hole[0] + Math.cos(angle) * hole[2];
-        var y = hole[1] + Math.sin(angle) * hole[3];
-        add(x, y, frontZ(x) + 1, "edge", .7 + random() * .25);
-        if (i % 2 === 0) add(hole[0] + Math.cos(angle) * hole[2] * .78, hole[1] + Math.sin(angle) * hole[3] * .78, frontZ(x) - 9, "cavity", .25);
+    var garlandCount = Math.round(290 * density);
+    for (var i = 0; i < garlandCount; i++) {
+      var t = i / (garlandCount - 1);
+      var y = -125 + t * 235;
+      var angle = t * Math.PI * 6 + .7;
+      var radius = foliageRadius(y) * 1.025;
+      add(Math.cos(angle) * radius, y, Math.sin(angle) * radius, "garland", .55 + random() * .35, .85 + random() * .45);
+    }
+
+    for (var i = 0; i < 95 * density; i++) {
+      var y = -115 + random() * 215;
+      var angle = random() * Math.PI * 2;
+      var radius = foliageRadius(y) * 1.05;
+      var ornament = random();
+      var face = ornament < .39 ? "ruby" : ornament < .74 ? "gold" : "ice";
+      add(Math.cos(angle) * radius, y, Math.sin(angle) * radius, face, .8 + random() * .2, 2 + random() * 1.3);
+    }
+    add(62, 72, 62, "feature", 1, 3.8);
+
+    var star = [];
+    for (var i = 0; i < 10; i++) {
+      var angle = -Math.PI / 2 + i * Math.PI / 5;
+      var radius = i % 2 ? 6 : 15;
+      star.push([Math.cos(angle) * radius, -160 + Math.sin(angle) * radius]);
+    }
+    for (var i = 0; i < star.length; i++) {
+      var next = star[(i + 1) % star.length];
+      for (var j = 0, count = width < 480 ? 7 : 11; j < count; j++) {
+        var t = j / count;
+        add(star[i][0] + (next[0] - star[i][0]) * t, star[i][1] + (next[1] - star[i][1]) * t, 9, "star", .75 + random() * .25, 1.1 + random() * .5);
       }
-    });
-    topHoles.forEach(function (hole) {
-      for (var i = 0, count = width < 480 ? 28 : 44; i < count; i++) {
-        var angle = i / count * Math.PI * 2;
-        var x = hole[0] + Math.cos(angle) * hole[2];
-        var z = hole[1] + Math.sin(angle) * hole[3];
-        add(x, topY(x) - 1, z, "edge", .7 + random() * .25);
-        if (i % 2 === 0) add(hole[0] + Math.cos(angle) * hole[2] * .78, topY(x) + 10, hole[1] + Math.sin(angle) * hole[3] * .78, "cavity", .25);
-      }
-    });
-    sideHoles.forEach(function (hole) {
-      for (var i = 0, count = width < 480 ? 23 : 36; i < count; i++) {
-        var angle = i / count * Math.PI * 2;
-        add(-191, hole[1] + Math.sin(angle) * hole[3], hole[0] + Math.cos(angle) * hole[2], "edge", .7 + random() * .25);
-      }
-    });
-    for (var i = 0; i < 65 * density; i++) {
-      add(-265 + random() * 540, -165 + random() * 300, -120 + random() * 240, "dust", .09 + random() * .24);
+    }
+    for (var i = 0; i < 30 * density; i++) {
+      add((random() - .5) * 7, -161 + (random() - .5) * 7, 8 + random() * 4, "star", .65 + random() * .3);
+    }
+
+    for (var i = 0; i < 70 * density; i++) {
+      add(-175 + random() * 350, -180 + random() * 370, -140 + random() * 280, "dust", .08 + random() * .22);
     }
   }
 
@@ -142,9 +134,9 @@
     var still = reducedMotion && reducedMotion.matches;
     var light = document.documentElement.getAttribute("data-theme") === "light";
     var colors = light
-      ? { front: "#b96e21", top: "#a9600e", side: "#8d4b16", bottom: "#95521b", back: "#9c6128", edge: "#7d410c", cavity: "#683b1b", dust: "#a66e36" }
-      : { front: "#ffb65c", top: "#ffd788", side: "#e69a4e", bottom: "#b97439", back: "#b6865b", edge: "#ffe4a4", cavity: "#ae6936", dust: "#ffbd71" };
-    var scale = Math.min(width / 510, height / 365);
+      ? { crown: "#24875f", middle: "#227d57", lower: "#1d704d", trunk: "#88512c", garland: "#956111", ruby: "#ad3850", feature: "#b3284c", gold: "#a46d1b", ice: "#436eab", star: "#b47a17", dust: "#599976" }
+      : { crown: "#b0eac6", middle: "#8dd9ad", lower: "#6bc896", trunk: "#c18b58", garland: "#ffe09a", ruby: "#ff8490", feature: "#ff5d75", gold: "#ffd084", ice: "#a9d9ff", star: "#ffe3a0", dust: "#a8d9bf" };
+    var scale = Math.min(width / 410, height / 365);
     var radius = Math.min(72, width * .16);
 
     context.clearRect(0, 0, width, height);
@@ -207,8 +199,8 @@
     });
 
     if (!still && hover > .01) {
-      context.strokeStyle = light ? "#a9600e" : "#ffce84";
-      context.shadowColor = light ? "#c47b29" : "#ffd78e";
+      context.strokeStyle = light ? "#347b61" : "#b6ecd0";
+      context.shadowColor = light ? "#59a688" : "#8adbb1";
       context.shadowBlur = 12;
       context.lineWidth = 1.4;
       context.globalAlpha = hover * .58;

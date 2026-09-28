@@ -4,7 +4,7 @@ const { join } = require("node:path");
 const { runInNewContext } = require("node:vm");
 const test = require("node:test");
 
-const script = readFileSync(join(__dirname, "../assets/js/cheese-particles.js"), "utf8");
+const script = readFileSync(join(__dirname, "../assets/js/tree-particles.js"), "utf8");
 
 function mount({ width = 520, height = 420, reduced = false, ratio = 1, staleStyles = false } = {}) {
   const frames = new Map();
@@ -80,10 +80,10 @@ function mount({ width = 520, height = 420, reduced = false, ratio = 1, staleSty
   };
 }
 
-test("renders a particle cheese and pauses when it leaves the viewport", () => {
+test("renders a decorated particle tree and pauses when it leaves the viewport", () => {
   const page = mount();
   assert.ok(page.drawn() > 2400);
-  assert.ok(["#ffd788", "#ffb65c", "#e69a4e"].every(color => page.colors.has(color)));
+  assert.ok(["#b0eac6", "#8dd9ad", "#6bc896", "#ffe3a0", "#ff8490"].every(color => page.colors.has(color)));
   const sizes = page.arcs().map(arc => arc[2]);
   assert.ok(Math.max(...sizes) > Math.min(...sizes) * 2);
   assert.ok(page.classes.has("is-ready"));
@@ -104,7 +104,7 @@ test("keeps the page height stable when a browser has cached the previous styles
   assert.ok(page.scene.getBoundingClientRect().height <= initialHeight + 1);
 });
 
-test("mouse movement rotates the front and top surfaces in three dimensions", () => {
+test("mouse movement rotates tree ornaments around the foliage in three dimensions", () => {
   const left = mount();
   const right = mount();
   left.pointer(20, 210);
@@ -118,9 +118,10 @@ test("mouse movement rotates the front and top surfaces in three dimensions", ()
       const dots = page.fills().filter(dot => dot[2] === color);
       return dots.reduce((sum, dot) => sum + dot[0], 0) / dots.length;
     }
-    return center("#ffb65c") - center("#ffd788");
+    return center("#ff5d75") - center("#b0eac6");
   }
-  assert.ok(Math.abs(surfaceGap(left) - surfaceGap(right)) > 8);
+  const displacement = Math.abs(surfaceGap(left) - surfaceGap(right));
+  assert.ok(displacement > 8, `ornament rotation displacement was ${displacement}`);
 });
 
 test("mouse movement opens a local ripple that settles after leaving", () => {
@@ -178,5 +179,5 @@ test("reduces detail on small screens and keeps a still image for reduced motion
   mobile.setReduced(true);
   assert.equal(mobile.frames.size, 0);
   mobile.setTheme("light");
-  assert.ok(mobile.colors.has("#a9600e"));
+  assert.ok(mobile.colors.has("#24875f"));
 });
