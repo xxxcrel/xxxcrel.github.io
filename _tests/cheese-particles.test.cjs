@@ -6,7 +6,7 @@ const test = require("node:test");
 
 const script = readFileSync(join(__dirname, "../assets/js/cheese-particles.js"), "utf8");
 
-function mount({ width = 520, height = 420, reduced = false, ratio = 1 } = {}) {
+function mount({ width = 520, height = 420, reduced = false, ratio = 1, staleStyles = false } = {}) {
   const frames = new Map();
   const events = {};
   const colors = new Set();
@@ -16,17 +16,21 @@ function mount({ width = 520, height = 420, reduced = false, ratio = 1 } = {}) {
   let theme = "dark";
   let observer;
   let onMotionChange;
+  let onResize;
 
   const context = {
     clearRect() {}, save() {}, restore() {}, translate() {}, rotate() {}, scale() {}, setTransform() {}, beginPath() {}, arc() {},
     fill() { drawn++; colors.add(this.fillStyle); }
   };
   const scene = {
+    style: {},
     classList: { add(name) { classes.add(name); } },
-    getBoundingClientRect() { return { width, height, left: 0, top: 0 }; },
+    getBoundingClientRect() {
+      return { width, height: staleStyles ? 300 + (canvas.style.position === "absolute" ? 0 : canvas.height) : height, left: 0, top: 0 };
+    },
     addEventListener(name, handler) { events[`scene:${name}`] = handler; }
   };
-  const canvas = { parentElement: scene, getContext() { return context; } };
+  const canvas = { parentElement: scene, style: {}, height: 150, getContext() { return context; } };
   const motion = { matches: reduced, addEventListener(name, handler) { onMotionChange = handler; } };
   const document = {
     hidden: false,
@@ -38,7 +42,10 @@ function mount({ width = 520, height = 420, reduced = false, ratio = 1 } = {}) {
     constructor(callback) { observer = callback; }
     observe() { observer([{ isIntersecting: true }]); }
   }
-  class ResizeObserver { observe() {} }
+  class ResizeObserver {
+    constructor(callback) { onResize = callback; }
+    observe() {}
+  }
   const window = {
     devicePixelRatio: ratio,
     matchMedia() { return motion; },
@@ -51,8 +58,9 @@ function mount({ width = 520, height = 420, reduced = false, ratio = 1 } = {}) {
 
   runInNewContext(script, { document, window, IntersectionObserver, ResizeObserver, Math });
   return {
-    canvas, classes, colors, document, events, frames, motion,
+    canvas, classes, colors, document, events, frames, motion, scene,
     drawn() { return drawn; },
+    resize() { onResize(); },
     inView(value) { observer([{ isIntersecting: value }]); },
     setTheme(value) { theme = value; events["window:site-theme-change"](); },
     setReduced(value) { motion.matches = value; onMotionChange(); }
@@ -71,6 +79,13 @@ test("renders a particle cheese and pauses when it leaves the viewport", () => {
   page.document.hidden = true;
   page.events["document:visibilitychange"]();
   assert.equal(page.frames.size, 0);
+});
+
+test("keeps the page height stable when a browser has cached the previous stylesheet", () => {
+  const page = mount({ staleStyles: true });
+  const initialHeight = page.scene.getBoundingClientRect().height;
+  for (let i = 0; i < 10; i++) page.resize();
+  assert.ok(page.scene.getBoundingClientRect().height <= initialHeight + 1);
 });
 
 test("reduces detail on small screens and keeps a still image for reduced motion", () => {

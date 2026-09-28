@@ -41,6 +41,8 @@ html { scroll-behavior: smooth; }
 body {
   min-width: 320px;
   margin: 0;
+  overflow-x: hidden;
+  overflow-x: clip;
   background: var(--bg);
   color: var(--text);
   font: 16px/1.75 var(--font-body);
@@ -62,11 +64,9 @@ button { font: inherit; }
   width: 34px;
   height: 34px;
   place-items: center;
-  border: 1px solid rgba(139,170,255,.55);
+  border: 1px solid rgba(255, 198, 111, .35);
   border-radius: 9px;
-  background: var(--surface-raised);
-  color: var(--accent);
-  font: 700 1.2rem/1 var(--font-mono);
+  background: rgba(243, 168, 71, .12);
 }
 .terminal-logo__text { font-size: 1.1rem; font-weight: 750; letter-spacing: -.045em; }
 .terminal-logo__dot, .heading-dot { color: var(--accent); }
@@ -120,6 +120,7 @@ button { font: inherit; }
   align-items: center;
   padding: clamp(70px, 11vw, 142px) 0 clamp(80px, 11vw, 130px);
   isolation: isolate;
+  overflow-x: clip;
 }
 .home-hero::before {
   position: absolute;

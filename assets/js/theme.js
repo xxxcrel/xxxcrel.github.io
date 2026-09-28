@@ -9,7 +9,7 @@
   }
 
   if (!savedTheme) {
-    savedTheme = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+    savedTheme = "dark";
   }
   root.setAttribute("data-theme", savedTheme);
   var themeColor = document.querySelector('meta[name="theme-color"]');

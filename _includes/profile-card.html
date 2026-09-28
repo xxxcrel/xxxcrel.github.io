@@ -1,9 +1,17 @@
 <header class="terminal-header">
   <div class="terminal-header__row">
     <a class="terminal-logo" href="{{ '/' | relative_url }}" aria-label="{{ site.title }} 首页">
-      <span class="terminal-logo__prompt" aria-hidden="true">λ</span>
+      <span class="terminal-logo__prompt" aria-hidden="true">
+        <svg viewBox="0 0 32 32" width="23" height="23" fill="none">
+          <path d="M3 12 19 4l10 8H3Z" fill="#FFD47D"/>
+          <path d="M3 12h26L3 28V12Z" fill="#F3A847"/>
+          <circle cx="9" cy="16" r="2" fill="#483221"/>
+          <circle cx="7" cy="23" r="1.4" fill="#483221"/>
+          <circle cx="16" cy="11" r="1.5" fill="#483221"/>
+        </svg>
+      </span>
       <span class="terminal-logo__text">{{ site.title }}<span class="terminal-logo__dot">.</span></span>
-      <span class="terminal-logo__badge">FIELD NOTES</span>
+      <span class="terminal-logo__badge">BLOG</span>
     </a>
     <div class="terminal-header__tools">
       <button class="theme-button" type="button" data-theme-button aria-label="切换明暗主题"><span aria-hidden="true">◐</span><span class="theme-button__label"> 主题</span></button>

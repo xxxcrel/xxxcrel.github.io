@@ -7,6 +7,15 @@
   if (!context) return;
 
   var scene = canvas.parentElement;
+  // Keep the canvas out of layout even if HTML arrives before a fresh stylesheet.
+  // Otherwise its intrinsic height enlarges the scene, which ResizeObserver
+  // feeds back into canvas.height on every callback.
+  scene.style.position = "relative";
+  canvas.style.position = "absolute";
+  canvas.style.inset = "0";
+  canvas.style.width = "100%";
+  canvas.style.height = "100%";
+  canvas.style.display = "block";
   var reducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)");
   var top = [[-205, -50], [55, -140], [210, -63]];
   var front = [[-205, -50], [210, -63], [-205, 60]];
