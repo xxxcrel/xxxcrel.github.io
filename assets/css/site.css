@@ -221,6 +221,7 @@ button { font: inherit; }
   filter: drop-shadow(0 12px 32px rgba(255, 168, 108, .16));
 }
 .black-hole-scene.is-ready .black-hole-scene__fallback { display: none; }
+:root[data-theme="light"] .black-hole-scene__horizon { fill: #41536d; stroke: #a78268; }
 .black-hole-scene__label {
   position: absolute;
   right: 0;

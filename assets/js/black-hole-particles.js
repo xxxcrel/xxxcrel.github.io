@@ -80,7 +80,7 @@
       ? { hot: "#bb6729", amber: "#a5612f", blue: "#506ca2", haze: "#826a9a", flare: "#c77c2e", dust: "#7b83a9" }
       : { hot: "#ffe0a7", amber: "#ffb376", blue: "#a3bdf6", haze: "#b39bd5", flare: "#fff0cc", dust: "#aab5df" };
     var scale = Math.min(width / 410, height / 350);
-    var holeRadius = 37 * scale;
+    var holeRadius = 34 * scale;
     var rippleRadius = Math.min(72, width * .16);
 
     context.clearRect(0, 0, width, height);
@@ -155,9 +155,13 @@
 
     context.save();
     context.globalAlpha = 1;
-    context.shadowColor = light ? "#d69c67" : "#ffb77f";
-    context.shadowBlur = 24;
-    context.fillStyle = "#050812";
+    context.shadowColor = light ? "#a89183" : "#d79f79";
+    context.shadowBlur = 17;
+    var horizon = context.createRadialGradient(cx, cy, 0, cx, cy, holeRadius);
+    horizon.addColorStop(0, light ? "#26354d" : "#0a1020");
+    horizon.addColorStop(.68, light ? "#354761" : "#101a2e");
+    horizon.addColorStop(1, light ? "#596e84" : "#1c2d46");
+    context.fillStyle = horizon;
     context.beginPath();
     context.arc(cx, cy, holeRadius, 0, Math.PI * 2);
     context.fill();
@@ -165,11 +169,11 @@
 
     projected.forEach(function (item) { if (item.depth >= 0) dot(item); });
 
-    context.strokeStyle = light ? "#ae713f" : "#ffd59c";
-    context.shadowColor = light ? "#d5a675" : "#ffbd85";
-    context.shadowBlur = 14;
-    context.lineWidth = 1.8;
-    context.globalAlpha = .72;
+    context.strokeStyle = light ? "#9f7d63" : "#e5c4a2";
+    context.shadowColor = light ? "#bc987b" : "#dfae87";
+    context.shadowBlur = 10;
+    context.lineWidth = 1.5;
+    context.globalAlpha = .55;
     context.beginPath();
     context.arc(cx, cy, holeRadius + 5, 0, Math.PI * 2);
     context.stroke();

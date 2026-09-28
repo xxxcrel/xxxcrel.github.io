@@ -23,7 +23,7 @@ function mount({ width = 520, height = 420, reduced = false, ratio = 1, staleSty
 
   const context = {
     clearRect() { arcs = []; fills = []; strokes = 0; }, save() {}, restore() {}, translate() {}, rotate() {}, scale() {}, setTransform() {}, beginPath() {}, fillRect() {},
-    createRadialGradient() { return { addColorStop() {} }; },
+    createRadialGradient() { return { addColorStop(offset, color) { colors.add(color); } }; },
     arc(x, y, radius) { arcs.push([x, y, radius]); }, stroke() { strokes++; },
     fill() { drawn++; colors.add(this.fillStyle); fills.push([arcs.at(-1)[0], arcs.at(-1)[1], this.fillStyle]); }
   };
@@ -86,7 +86,7 @@ function mount({ width = 520, height = 420, reduced = false, ratio = 1, staleSty
 test("renders an accretion disk around a dark event horizon and pauses offscreen", () => {
   const page = mount();
   assert.ok(page.drawn() > 2400);
-  assert.ok(["#ffe0a7", "#ffb376", "#a3bdf6", "#050812"].every(color => page.colors.has(color)));
+  assert.ok(["#ffe0a7", "#ffb376", "#a3bdf6", "#0a1020"].every(color => page.colors.has(color)));
   const sizes = page.arcs().map(arc => arc[2]);
   assert.ok(Math.max(...sizes) > Math.min(...sizes) * 2);
   assert.ok(page.classes.has("is-ready"));
@@ -142,7 +142,7 @@ test("mouse movement opens a local ripple that settles after leaving", () => {
     page.frame(800 + i * 40);
   }
   assert.equal(page.strokes(), 1);
-  assert.ok(page.colors.has("#050812"));
+  assert.ok(page.colors.has("#0a1020"));
 });
 
 test("touch and reduced-motion users do not get a mouse ripple", () => {

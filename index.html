@@ -15,12 +15,15 @@ description: 克里尔的文章与技术笔记
   </div>
   <div class="black-hole-scene" role="img" aria-label="可随鼠标转动的三维黑洞粒子">
     <svg class="black-hole-scene__fallback" viewBox="0 0 420 290" aria-hidden="true">
-      <defs><radialGradient id="horizon-glow"><stop offset="0" stop-color="#F2A66C" stop-opacity=".4"/><stop offset="1" stop-color="#F2A66C" stop-opacity="0"/></radialGradient></defs>
+      <defs>
+        <radialGradient id="horizon-glow"><stop offset="0" stop-color="#F2A66C" stop-opacity=".4"/><stop offset="1" stop-color="#F2A66C" stop-opacity="0"/></radialGradient>
+        <radialGradient id="horizon-fill"><stop offset="0" stop-color="#0A1020"/><stop offset="1" stop-color="#1C2D46"/></radialGradient>
+      </defs>
       <circle cx="210" cy="145" r="104" fill="url(#horizon-glow)"/>
       <ellipse cx="210" cy="145" rx="165" ry="58" fill="none" stroke="#9EABEF" stroke-width="8" opacity=".25"/>
       <ellipse cx="210" cy="145" rx="151" ry="49" fill="none" stroke="#FFBF82" stroke-width="15" opacity=".6"/>
       <ellipse cx="210" cy="145" rx="133" ry="43" fill="none" stroke="#FFE0AD" stroke-width="5" opacity=".65"/>
-      <circle cx="210" cy="145" r="42" fill="#050812" stroke="#FFCC95" stroke-width="3"/>
+      <circle class="black-hole-scene__horizon" cx="210" cy="145" r="39" fill="url(#horizon-fill)" stroke="#D5B397" stroke-width="2" opacity=".85"/>
       <path d="M59 145a151 49 0 0 0 302 0" fill="none" stroke="#FFBC83" stroke-width="15" opacity=".85"/>
       <path d="M76 145a134 44 0 0 0 268 0" fill="none" stroke="#FFE0AD" stroke-width="5" opacity=".8"/>
     </svg>
