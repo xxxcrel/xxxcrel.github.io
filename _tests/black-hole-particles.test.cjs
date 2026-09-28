@@ -4,7 +4,7 @@ const { join } = require("node:path");
 const { runInNewContext } = require("node:vm");
 const test = require("node:test");
 
-const script = readFileSync(join(__dirname, "../assets/js/tree-particles.js"), "utf8");
+const script = readFileSync(join(__dirname, "../assets/js/black-hole-particles.js"), "utf8");
 
 function mount({ width = 520, height = 420, reduced = false, ratio = 1, staleStyles = false } = {}) {
   const frames = new Map();
@@ -19,10 +19,12 @@ function mount({ width = 520, height = 420, reduced = false, ratio = 1, staleSty
   let onResize;
   let arcs = [];
   let fills = [];
+  let strokes = 0;
 
   const context = {
-    clearRect() { arcs = []; fills = []; }, save() {}, restore() {}, translate() {}, rotate() {}, scale() {}, setTransform() {}, beginPath() {},
-    arc(x, y, radius) { arcs.push([x, y, radius]); }, stroke() {},
+    clearRect() { arcs = []; fills = []; strokes = 0; }, save() {}, restore() {}, translate() {}, rotate() {}, scale() {}, setTransform() {}, beginPath() {}, fillRect() {},
+    createRadialGradient() { return { addColorStop() {} }; },
+    arc(x, y, radius) { arcs.push([x, y, radius]); }, stroke() { strokes++; },
     fill() { drawn++; colors.add(this.fillStyle); fills.push([arcs.at(-1)[0], arcs.at(-1)[1], this.fillStyle]); }
   };
   const scene = {
@@ -64,6 +66,7 @@ function mount({ width = 520, height = 420, reduced = false, ratio = 1, staleSty
     canvas, classes, colors, document, events, frames, motion, scene,
     arcs() { return arcs; },
     fills() { return fills; },
+    strokes() { return strokes; },
     drawn() { return drawn; },
     resize() { onResize(); },
     frame(time) {
@@ -80,10 +83,10 @@ function mount({ width = 520, height = 420, reduced = false, ratio = 1, staleSty
   };
 }
 
-test("renders a decorated particle tree and pauses when it leaves the viewport", () => {
+test("renders an accretion disk around a dark event horizon and pauses offscreen", () => {
   const page = mount();
   assert.ok(page.drawn() > 2400);
-  assert.ok(["#b0eac6", "#8dd9ad", "#6bc896", "#ffe3a0", "#ff8490"].every(color => page.colors.has(color)));
+  assert.ok(["#ffe0a7", "#ffb376", "#a3bdf6", "#050812"].every(color => page.colors.has(color)));
   const sizes = page.arcs().map(arc => arc[2]);
   assert.ok(Math.max(...sizes) > Math.min(...sizes) * 2);
   assert.ok(page.classes.has("is-ready"));
@@ -104,7 +107,7 @@ test("keeps the page height stable when a browser has cached the previous styles
   assert.ok(page.scene.getBoundingClientRect().height <= initialHeight + 1);
 });
 
-test("mouse movement rotates tree ornaments around the foliage in three dimensions", () => {
+test("mouse movement rotates an asymmetric disk flare in three dimensions", () => {
   const left = mount();
   const right = mount();
   left.pointer(20, 210);
@@ -118,40 +121,28 @@ test("mouse movement rotates tree ornaments around the foliage in three dimensio
       const dots = page.fills().filter(dot => dot[2] === color);
       return dots.reduce((sum, dot) => sum + dot[0], 0) / dots.length;
     }
-    return center("#ff5d75") - center("#b0eac6");
+    return center("#fff0cc") - center("#ffe0a7");
   }
   const displacement = Math.abs(surfaceGap(left) - surfaceGap(right));
-  assert.ok(displacement > 8, `ornament rotation displacement was ${displacement}`);
+  assert.ok(displacement > 8, `flare rotation displacement was ${displacement}`);
 });
 
 test("mouse movement opens a local ripple that settles after leaving", () => {
   const page = mount();
-  const control = mount();
   page.frame(100);
-  control.frame(100);
-  const idle = page.arcs();
+  assert.equal(page.strokes(), 1);
   page.pointer(260, 205);
   for (let i = 0; i < 15; i++) {
     page.frame(150 + i * 40);
-    control.frame(150 + i * 40);
   }
-  const hovered = page.arcs();
-  assert.equal(hovered.length, idle.length + 2);
-  assert.ok(hovered.slice(0, idle.length).some((arc, index) => Math.hypot(arc[0] - idle[index][0], arc[1] - idle[index][1]) > 8));
+  assert.equal(page.strokes(), 3);
 
   page.leave();
   for (let i = 0; i < 60; i++) {
     page.frame(800 + i * 40);
-    control.frame(800 + i * 40);
   }
-  const settled = page.arcs();
-  const untouched = control.arcs();
-  assert.equal(settled.length, untouched.length);
-  function bounds(arcs) {
-    return [Math.min(...arcs.map(arc => arc[0])), Math.max(...arcs.map(arc => arc[0])),
-      Math.min(...arcs.map(arc => arc[1])), Math.max(...arcs.map(arc => arc[1]))];
-  }
-  assert.ok(bounds(settled).every((value, index) => Math.abs(value - bounds(untouched)[index]) < 3));
+  assert.equal(page.strokes(), 1);
+  assert.ok(page.colors.has("#050812"));
 });
 
 test("touch and reduced-motion users do not get a mouse ripple", () => {
@@ -159,12 +150,12 @@ test("touch and reduced-motion users do not get a mouse ripple", () => {
   page.pointer(260, 205);
   assert.equal(page.frames.size, 0);
   page.setTheme("light");
-  assert.equal(page.arcs().length, page.drawn() / 2);
+  assert.equal(page.strokes(), 1);
 
   const touch = mount();
   touch.pointer(260, 205, "touch");
   touch.frame(100);
-  assert.equal(touch.arcs().length, touch.drawn() / 2);
+  assert.equal(touch.strokes(), 1);
 });
 
 test("reduces detail on small screens and keeps a still image for reduced motion", () => {
@@ -179,5 +170,5 @@ test("reduces detail on small screens and keeps a still image for reduced motion
   mobile.setReduced(true);
   assert.equal(mobile.frames.size, 0);
   mobile.setTheme("light");
-  assert.ok(mobile.colors.has("#24875f"));
+  assert.ok(mobile.colors.has("#bb6729"));
 });

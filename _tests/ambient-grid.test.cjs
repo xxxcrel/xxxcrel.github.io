@@ -10,17 +10,19 @@ function mount({ reduced = false, hover = true, home = true } = {}) {
   let points = [];
   let strokes = 0;
   let curves = 0;
+  let markers = [];
   let nextFrame = 0;
   let theme = "dark";
   const events = {};
   const frames = new Map();
   const context = {
-    clearRect() { points = []; strokes = 0; curves = 0; },
+    clearRect() { points = []; strokes = 0; curves = 0; markers = []; },
     setTransform() {}, beginPath() {},
     moveTo(x, y) { points.push([x, y]); },
     quadraticCurveTo(cx, cy, x, y) { points.push([x, y]); curves++; },
     lineTo(x, y) { points.push([x, y]); },
-    stroke() { strokes++; }
+    stroke() { strokes++; },
+    fillRect(x, y, width, height) { markers.push([x + width / 2, y + height / 2, width, height]); }
   };
   const canvas = { style: {}, getContext() { return context; } };
   const media = (matches) => ({ matches, addEventListener() {} });
@@ -41,7 +43,7 @@ function mount({ reduced = false, hover = true, home = true } = {}) {
   runInNewContext(script, { document, window });
   return {
     canvas, context, events, frames, document,
-    points() { return points; }, strokes() { return strokes; }, curves() { return curves; },
+    points() { return points; }, markers() { return markers; }, strokes() { return strokes; }, curves() { return curves; },
     frame(time) {
       const next = frames.entries().next().value;
       if (!next) return;
@@ -58,8 +60,13 @@ test("the full-viewport grid bends near the pointer and stays behind content", (
   assert.equal(grid.canvas.style.pointerEvents, "none");
   assert.equal(grid.canvas.width, 1920);
   assert.ok(grid.strokes() > 20);
-  assert.ok(grid.curves() > grid.strokes() * 10);
+  assert.ok(grid.curves() > grid.strokes() * 3);
   assert.equal(grid.context.lineCap, "round");
+  assert.ok(grid.markers().length > 50);
+  const [squareX, squareY, squareWidth, squareHeight] = grid.markers()[0];
+  assert.equal(squareWidth, 4);
+  assert.equal(squareHeight, 4);
+  assert.ok(grid.points().every(point => Math.hypot(point[0] - squareX, point[1] - squareY) > 6));
   assert.equal(grid.frames.size, 1);
 
   grid.frame(100);

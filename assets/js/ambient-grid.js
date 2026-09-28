@@ -51,6 +51,7 @@
     context.lineJoin = "round";
     var spacing = width < 640 ? 76 : 90;
     var step = 14;
+    var gap = 11;
 
     function warp(x, y) {
       var waveX = motion ? Math.sin(time * .00034 + y * .007 + x * .003) * .55 : 0;
@@ -67,17 +68,29 @@
       return [x + waveX, y + waveY];
     }
 
-    function strokeLine(vertical, base, end) {
-      var previous = warp(vertical ? base : -step, vertical ? -step : base);
+    function strokeSegment(vertical, base, from, to) {
+      if (to <= from) return;
+      var previous = warp(vertical ? base : from, vertical ? from : base);
       context.beginPath();
       context.moveTo(previous[0], previous[1]);
-      for (var position = 0; position <= end + step; position += step) {
+      for (var position = from + step; position < to; position += step) {
         var next = warp(vertical ? base : position, vertical ? position : base);
         context.quadraticCurveTo(previous[0], previous[1], (previous[0] + next[0]) / 2, (previous[1] + next[1]) / 2);
         previous = next;
       }
-      context.lineTo(previous[0], previous[1]);
+      var end = warp(vertical ? base : to, vertical ? to : base);
+      context.quadraticCurveTo(previous[0], previous[1], (previous[0] + end[0]) / 2, (previous[1] + end[1]) / 2);
+      context.lineTo(end[0], end[1]);
       context.stroke();
+    }
+
+    function strokeLine(vertical, base, end) {
+      var from = -step;
+      for (var cross = spacing / 2; cross < end + step; cross += spacing) {
+        strokeSegment(vertical, base, from, cross - gap);
+        from = cross + gap;
+      }
+      strokeSegment(vertical, base, from, end + step);
     }
 
     for (var x = spacing / 2; x < width + spacing; x += spacing) {
@@ -85,6 +98,15 @@
     }
     for (var y = spacing / 2; y < height + spacing; y += spacing) {
       strokeLine(false, y, width);
+    }
+    context.fillStyle = light
+      ? (isHome ? "rgba(65, 91, 142, .27)" : "rgba(65, 91, 142, .16)")
+      : (isHome ? "rgba(164, 194, 246, .28)" : "rgba(164, 194, 246, .16)");
+    for (var x = spacing / 2; x < width; x += spacing) {
+      for (var y = spacing / 2; y < height; y += spacing) {
+        var point = warp(x, y);
+        context.fillRect(point[0] - 2, point[1] - 2, 4, 4);
+      }
     }
   }
 

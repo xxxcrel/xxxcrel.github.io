@@ -13,19 +13,19 @@ description: 克里尔的文章与技术笔记
       <a class="button-link button-link--ghost" href="{{ '/about/' | relative_url }}">关于我 <span aria-hidden="true">→</span></a>
     </div>
   </div>
-  <div class="tree-scene" role="img" aria-label="可随鼠标转动的三维圣诞树粒子">
-    <svg class="tree-scene__fallback" viewBox="-150 -190 300 375" aria-hidden="true">
-      <path d="M-17 102h34v60h-34z" fill="#AD7753"/>
-      <path d="M0-49-122 120Q0 137 122 120L0-49Z" fill="#438C6D"/>
-      <path d="M0-100-91 52Q0 65 91 52L0-100Z" fill="#62AD83"/>
-      <path d="M0-151-58-24Q0-12 58-24L0-151Z" fill="#87CC9A"/>
-      <path d="M0-178 5-166 18-165 8-157 12-144 0-151-12-144-8-157-18-165-5-166Z" fill="#FFE09A"/>
-      <path d="M-42-26Q0 3 42-26M-71 43Q0 78 71 43M-102 106Q0 146 102 106" stroke="#F9D98D" stroke-width="2" fill="none" opacity=".8"/>
-      <circle cx="-24" cy="1" r="4" fill="#F58791"/><circle cx="34" cy="33" r="4" fill="#A9D9FF"/><circle cx="-58" cy="85" r="5" fill="#FFD084"/>
-      <circle cx="64" cy="94" r="4" fill="#F58791"/><circle cx="17" cy="-54" r="3" fill="#FFD084"/>
+  <div class="black-hole-scene" role="img" aria-label="可随鼠标转动的三维黑洞粒子">
+    <svg class="black-hole-scene__fallback" viewBox="0 0 420 290" aria-hidden="true">
+      <defs><radialGradient id="horizon-glow"><stop offset="0" stop-color="#F2A66C" stop-opacity=".4"/><stop offset="1" stop-color="#F2A66C" stop-opacity="0"/></radialGradient></defs>
+      <circle cx="210" cy="145" r="104" fill="url(#horizon-glow)"/>
+      <ellipse cx="210" cy="145" rx="165" ry="58" fill="none" stroke="#9EABEF" stroke-width="8" opacity=".25"/>
+      <ellipse cx="210" cy="145" rx="151" ry="49" fill="none" stroke="#FFBF82" stroke-width="15" opacity=".6"/>
+      <ellipse cx="210" cy="145" rx="133" ry="43" fill="none" stroke="#FFE0AD" stroke-width="5" opacity=".65"/>
+      <circle cx="210" cy="145" r="42" fill="#050812" stroke="#FFCC95" stroke-width="3"/>
+      <path d="M59 145a151 49 0 0 0 302 0" fill="none" stroke="#FFBC83" stroke-width="15" opacity=".85"/>
+      <path d="M76 145a134 44 0 0 0 268 0" fill="none" stroke="#FFE0AD" stroke-width="5" opacity=".8"/>
     </svg>
-    <canvas data-tree-particles aria-hidden="true"></canvas>
-    <span class="tree-scene__label" aria-hidden="true">CHRISTMAS TREE <span>/ MOVE TO INTERACT</span></span>
+    <canvas data-black-hole-particles aria-hidden="true"></canvas>
+    <span class="black-hole-scene__label" aria-hidden="true">BLACK HOLE <span>/ MOVE TO INTERACT</span></span>
   </div>
 </section>
 
@@ -75,5 +75,5 @@ description: 克里尔的文章与技术笔记
   {% endif %}
 </nav>
 {% endif %}
-<script src="{{ '/assets/js/tree-particles.js' | relative_url }}?v={{ site.time | date: '%Y%m%d%H%M%S' }}" defer></script>
+<script src="{{ '/assets/js/black-hole-particles.js' | relative_url }}?v={{ site.time | date: '%Y%m%d%H%M%S' }}" defer></script>
 <script src="{{ '/assets/js/card-spotlight.js' | relative_url }}?v={{ site.time | date: '%Y%m%d%H%M%S' }}" defer></script>
