@@ -1,7 +1,7 @@
 ---
 layout: post
 title: java泛型笔记
-categories: java generic
+categories: Java generic
 description: 
 keywords: Generic, Java
 ---
@@ -290,4 +290,3 @@ keywords: Generic, Java
     `addToAppleStore`表达的意思是:我接受一个列表(仓库),并且这个仓库可能是Fruit, 也可能是可加工的(Processable), 也可能是可出售的(Salable),所以向里面添加任何Apple或者Apple子类是安全且正确的.但是这时候我们如果想要上面`extends`语法的便利性去调用Apple中的方法时,那么将会获得一个编译错误.
     __为什么?__ 
     因为List的边界是lower boundes,所以传入的List中的元素不一定拥有Apple中的方法, 比如传入List<Processable> 那么Processable中没有Apple中的方法的.
-

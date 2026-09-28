@@ -41,6 +41,10 @@ navs:
     label: 分类
 
   -
+    href: /archives/
+    label: 归档
+
+  -
     href: /links/
     label: 链接
 

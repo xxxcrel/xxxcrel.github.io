@@ -1,7 +1,7 @@
 ---
 layout: post
 title: proxy config
-categories: linux proxy
+categories: Linux proxy
 description: 
 keywords: proxy, Linux
 ---

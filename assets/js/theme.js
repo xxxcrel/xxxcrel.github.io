@@ -12,6 +12,8 @@
     savedTheme = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
   }
   root.setAttribute("data-theme", savedTheme);
+  var themeColor = document.querySelector('meta[name="theme-color"]');
+  if (themeColor) themeColor.setAttribute("content", savedTheme === "light" ? "#f6f8fe" : "#0b1020");
 
   document.addEventListener("DOMContentLoaded", function () {
     var toggle = document.querySelector("[data-theme-button]");
@@ -19,6 +21,7 @@
 
     function sync(theme) {
       root.setAttribute("data-theme", theme);
+      if (themeColor) themeColor.setAttribute("content", theme === "light" ? "#f6f8fe" : "#0b1020");
       toggle.setAttribute("aria-pressed", theme === "light" ? "true" : "false");
       window.dispatchEvent(new CustomEvent("site-theme-change", {
         detail: { theme: theme }

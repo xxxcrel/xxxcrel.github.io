@@ -2,17 +2,17 @@
   <div class="terminal-header__row">
     <a class="terminal-logo" href="{{ '/' | relative_url }}" aria-label="{{ site.title }} 首页">
       <span class="terminal-logo__prompt" aria-hidden="true">λ</span>
-      <span class="terminal-logo__text">{{ site.title }}</span>
-      <span class="terminal-logo__cursor" aria-hidden="true"></span>
+      <span class="terminal-logo__text">{{ site.title }}<span class="terminal-logo__dot">.</span></span>
+      <span class="terminal-logo__badge">FIELD NOTES</span>
     </a>
     <div class="terminal-header__tools">
-      <button class="theme-button" type="button" data-theme-button aria-label="切换明暗主题"><span aria-hidden="true">◐</span><span class="theme-button__label"> THEME</span></button>
-      <a class="github-link" href="https://github.com/{{ site.github_username }}" target="_blank" rel="noreferrer">GITHUB ↗</a>
+      <button class="theme-button" type="button" data-theme-button aria-label="切换明暗主题"><span aria-hidden="true">◐</span><span class="theme-button__label"> 主题</span></button>
+      <a class="github-link" href="https://github.com/{{ site.github_username }}" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
     </div>
   </div>
   <nav class="terminal-nav" aria-label="主导航">
     {% for nav in site.navs %}
-    <a class="terminal-nav__item{% if page.url == nav.href %} is-active{% endif %}" href="{{ nav.href | relative_url }}">{{ nav.label }}</a>
+    <a class="terminal-nav__item{% if page.url == nav.href %} is-active{% endif %}" href="{{ nav.href | relative_url }}"{% if page.url == nav.href %} aria-current="page"{% endif %}>{{ nav.label }}</a>
     {% endfor %}
   </nav>
 </header>

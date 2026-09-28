@@ -3,31 +3,44 @@ layout: default
 title: 首页
 description: 克里尔的文章与技术笔记
 ---
-<section class="home-intro">
-  <p class="terminal-command"><span>~</span> cat welcome.txt</p>
-  <h1>代码、系统与<br><span>持续思考。</span></h1>
-  <p>{{ site.description }}。这里记录软件工程实践、阅读笔记，以及偶尔冒出的奇怪想法。</p>
+<section class="home-hero">
+  <div class="home-intro">
+    <p class="eyebrow"><span class="eyebrow__line"></span> 一个开发者的技术笔记</p>
+    <h1>代码、系统与<br><span>持续思考。</span></h1>
+    <p class="home-intro__description">记录 Java、系统设计与工程实践。把学到的东西写下来，慢慢构建自己的知识地图。</p>
+    <div class="hero-actions">
+      <a class="button-link" href="#latest">阅读文章 <span aria-hidden="true">↗</span></a>
+      <a class="button-link button-link--ghost" href="{{ '/about/' | relative_url }}">关于我 <span aria-hidden="true">→</span></a>
+    </div>
+  </div>
+  <div class="terminal-window" role="group" aria-label="博客概览">
+    <div class="terminal-window__bar"><span class="terminal-window__dots" aria-hidden="true"><i></i><i></i><i></i></span><span>~/crel/notes</span><span class="terminal-window__bar-end">— □ ×</span></div>
+    <div class="terminal-window__body">
+      <p class="terminal-window__command"><span>❯</span> cat about.txt</p>
+      <p>你好，我是克里尔。<br>这里收集关于软件和世界的思考。</p>
+      <p class="terminal-window__command"><span>❯</span> ls topics/</p>
+      <div class="terminal-window__topics"><a href="{{ '/categories/' | relative_url }}#java">java/</a><a href="{{ '/categories/' | relative_url }}#spring">spring/</a><a href="{{ '/categories/' | relative_url }}#linux">linux/</a><a href="{{ '/categories/' | relative_url }}#powerjob">powerjob/</a></div>
+      <p class="terminal-window__command"><span>❯</span> ls posts/ | wc -l</p>
+      <p class="terminal-window__output">{{ site.posts | size }} 篇文章 · 按主题整理 <span class="terminal-window__cursor" aria-hidden="true">▍</span></p>
+    </div>
+  </div>
 </section>
 
-<div class="section-heading"><span>最新文章</span><span>{{ site.posts | size }} ENTRIES</span></div>
-
-<section class="post-list">
+<section class="home-posts" id="latest" aria-labelledby="latest-title">
+  <div class="section-heading"><div><span class="section-kicker">THE LOG</span><h2 id="latest-title">最新文章<span class="heading-dot">.</span></h2></div><a href="{{ '/archives/' | relative_url }}">浏览归档 <span aria-hidden="true">↗</span></a></div>
+  <div class="post-list">
   {% for post in paginator.posts %}
   <article class="post-item">
     <div class="meta-bar">
       <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y-%m-%d" }}</time>
-      {% for cat in post.categories limit: 2 %}
-      <a href="{{ '/categories/' | relative_url }}#{{ cat | slugify }}">{{ cat }}</a>
-      {% endfor %}
+      {% for cat in post.categories limit: 1 %}<a href="{{ '/categories/' | relative_url }}#{{ cat | slugify }}">{{ cat }}</a>{% endfor %}
     </div>
     <h2 class="post-item__title"><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
     <p class="post-excerpt">{{ post.excerpt | strip_html | strip_newlines | truncate: 110 }}</p>
-    <div class="post-item__footer">
-      <span class="tag-chip">{{ post.content | number_of_words }} WORDS</span>
-      <a class="button-link" href="{{ post.url | relative_url }}">继续阅读</a>
-    </div>
+    <a class="post-item__more" href="{{ post.url | relative_url }}" aria-label="阅读 {{ post.title }}">阅读文章 <span aria-hidden="true">↗</span></a>
   </article>
   {% endfor %}
+  </div>
 </section>
 
 {% if paginator.total_pages > 1 %}

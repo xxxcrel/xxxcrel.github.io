@@ -32,4 +32,5 @@ jobs:
           test -s _site/index.html
           test -s _site/404.html
           test -s _site/assets/css/site.css
-          test -s _site/assets/js/three-background.js
+          test -s _site/assets/js/theme.js
+          test -s _site/assets/js/code-copy.js

@@ -7,7 +7,7 @@
   {% if page.sitemap == false %}<meta name="robots" content="noindex, nofollow">{% endif %}
   <link rel="alternate" type="application/atom+xml" title="{{ site.title }}" href="{{ site.subscribe_rss | absolute_url }}">
   <link rel="icon" href="{{ '/favicon.ico' | relative_url }}" sizes="any">
-  <meta name="theme-color" content="#1a170f">
+  <meta name="theme-color" content="#0b1020">
   <script src="{{ '/assets/js/theme.js' | relative_url }}"></script>
   <link rel="stylesheet" href="{{ '/assets/css/site.css' | relative_url }}">
 </head>
@@ -17,7 +17,7 @@
     <main class="content-shell" id="main-content">{{ content }}</main>
     <footer class="site-footer">
       <span>© {{ 'now' | date: "%Y" }} {{ site.author.name }}</span>
-      <span class="site-footer__status"><i aria-hidden="true"></i> SYSTEM ONLINE</span>
+      <span class="site-footer__status"><i aria-hidden="true"></i> 站点在线</span>
       <a href="{{ site.subscribe_rss | relative_url }}">RSS</a>
     </footer>
   </div>
