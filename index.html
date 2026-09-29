@@ -20,14 +20,15 @@ description: 克里尔的文章与技术笔记
         <radialGradient id="horizon-fill"><stop offset="0" stop-color="#080F1D"/><stop offset=".7" stop-color="#0B1425"/><stop offset="1" stop-color="#14243A"/></radialGradient>
         <radialGradient id="horizon-light-fill"><stop offset="0" stop-color="#26354D"/><stop offset="1" stop-color="#374B63"/></radialGradient>
         <linearGradient id="disk-streak"><stop offset="0" stop-color="#FFC58C" stop-opacity="0"/><stop offset=".25" stop-color="#FFC58C" stop-opacity=".6"/><stop offset=".5" stop-color="#FFE7BE"/><stop offset=".75" stop-color="#FFC58C" stop-opacity=".6"/><stop offset="1" stop-color="#FFC58C" stop-opacity="0"/></linearGradient>
+        <linearGradient id="lens-fade"><stop offset="0" stop-color="#FFE4B3" stop-opacity="0"/><stop offset=".18" stop-color="#FFE4B3" stop-opacity=".55"/><stop offset=".34" stop-color="#FFE4B3"/><stop offset=".66" stop-color="#FFE4B3"/><stop offset=".82" stop-color="#FFE4B3" stop-opacity=".55"/><stop offset="1" stop-color="#FFE4B3" stop-opacity="0"/></linearGradient>
       </defs>
       <circle cx="210" cy="145" r="104" fill="url(#horizon-glow)"/>
-      <path d="M32 145C115 145 128 74 210 74S305 145 388 145" fill="none" stroke="#FFC58C" stroke-width="17" stroke-linecap="round" opacity=".25"/>
-      <path d="M32 145C115 145 128 74 210 74S305 145 388 145" fill="none" stroke="#FFE4B3" stroke-width="5" stroke-linecap="round" opacity=".85"/>
+      <path d="M32 145C115 145 128 74 210 74S305 145 388 145" fill="none" stroke="url(#lens-fade)" stroke-width="17" stroke-linecap="round" opacity=".25"/>
+      <path d="M32 145C115 145 128 74 210 74S305 145 388 145" fill="none" stroke="url(#lens-fade)" stroke-width="5" stroke-linecap="round" opacity=".85"/>
       <path d="M20 145H400" fill="none" stroke="url(#disk-streak)" stroke-width="3"/>
       <circle class="black-hole-scene__horizon" cx="210" cy="145" r="39" fill="url(#horizon-fill)"/>
-      <path d="M163 157C153 228 267 228 257 157" fill="none" stroke="#FFC58C" stroke-width="13" stroke-linecap="round" opacity=".24"/>
-      <path d="M163 157C153 228 267 228 257 157" fill="none" stroke="#FFE4B3" stroke-width="4" stroke-linecap="round" opacity=".75"/>
+      <path d="M155 148C151 228 269 228 265 148" fill="none" stroke="url(#lens-fade)" stroke-width="13" stroke-linecap="round" opacity=".24"/>
+      <path d="M155 148C151 228 269 228 265 148" fill="none" stroke="url(#lens-fade)" stroke-width="4" stroke-linecap="round" opacity=".75"/>
     </svg>
     <canvas data-black-hole-particles aria-hidden="true"></canvas>
     <span class="black-hole-scene__label" aria-hidden="true">BLACK HOLE <span>/ MOVE TO INTERACT</span></span>

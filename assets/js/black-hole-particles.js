@@ -133,16 +133,26 @@
         context.bezierCurveTo(cx + holeRadius * 1.55, cy - holeRadius * 1.86,
           cx + holeRadius * 1.65, cy - holeRadius * .12, cx + holeRadius * 3.1, cy);
       } else {
-        context.moveTo(cx - holeRadius * 1.25, cy + holeRadius * .28);
+        context.moveTo(cx - holeRadius * 1.42, cy + holeRadius * .08);
         context.bezierCurveTo(cx - holeRadius * 1.45, cy + holeRadius * 2.3,
-          cx + holeRadius * 1.45, cy + holeRadius * 2.3, cx + holeRadius * 1.25, cy + holeRadius * .28);
+          cx + holeRadius * 1.45, cy + holeRadius * 2.3, cx + holeRadius * 1.42, cy + holeRadius * .08);
       }
     }
 
     function paintLens(upper) {
       context.save();
-      context.strokeStyle = light ? "#ad7443" : "#ffd6a0";
+      var reach = holeRadius * (upper ? 3.1 : 1.42);
+      var tint = light ? "173,116,67" : "255,214,160";
+      var fade = context.createLinearGradient(cx - reach, cy, cx + reach, cy);
+      fade.addColorStop(0, "rgba(" + tint + ",0)");
+      fade.addColorStop(.18, "rgba(" + tint + ",.55)");
+      fade.addColorStop(.34, "rgba(" + tint + ",1)");
+      fade.addColorStop(.66, "rgba(" + tint + ",1)");
+      fade.addColorStop(.82, "rgba(" + tint + ",.55)");
+      fade.addColorStop(1, "rgba(" + tint + ",0)");
+      context.strokeStyle = fade;
       context.shadowColor = light ? "#ba8c5a" : "#ffc38c";
+      context.lineCap = "round";
       for (var layer = 0; layer < 3; layer++) {
         context.lineWidth = (upper ? 17 : 13) * scale / (layer + 1);
         context.globalAlpha = (upper ? .12 : .08) + layer * (upper ? .19 : .12);
