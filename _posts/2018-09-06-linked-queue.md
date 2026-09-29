@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "队列————链表实现"
+title: "队列的链表实现"
 date: 2018-09-06 21:12:00 +0800
 categories: [cnblogs]
 description: "队列的链表实现 Queue.h: LinkedQueue.c:"

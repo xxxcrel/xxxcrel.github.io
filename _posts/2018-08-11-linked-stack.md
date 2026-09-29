@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "栈———链表实现"
+title: "栈的链表实现"
 date: 2018-08-11 20:28:00 +0800
 categories: [cnblogs]
 description: "栈的链表实现细节主要在Push()和Pop()例程中链表的实现不一样。 操作图示： Stack.c: LinkedStack.c:"

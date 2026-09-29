@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "栈———数组实现"
+title: "栈的数组实现"
 date: 2018-08-11 20:22:00 +0800
 categories: [cnblogs]
 description: "栈（stack）是一种比较基础的数据结构，其限制了删除和插入在一个位置操作，而其主要思想就是后进先出（LIFO）。 操作图示： 具体细节可通过代码看出。 下面给出函数的声明部分： StackRecord."
