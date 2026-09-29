@@ -56,9 +56,8 @@
       var inverse = 1 - t;
       return inverse * inverse * inverse * a + 3 * inverse * inverse * t * b + 3 * inverse * t * t * c + t * t * t * d;
     }
-    function lensPoint(upper, t) {
+    function lensPoint(t) {
       var r = 34;
-      if (!upper) return [cubic(-1.42 * r, -1.45 * r, 1.45 * r, 1.42 * r, t), cubic(.08 * r, 2.3 * r, 2.3 * r, .08 * r, t)];
       if (t < .5) {
         t *= 2;
         return [cubic(-3.1 * r, -1.65 * r, -1.55 * r, 0, t), cubic(0, -.12 * r, -1.86 * r, -1.86 * r, t)];
@@ -86,23 +85,16 @@
     add(129, .7, -2, "flare", .95, 3.5, 1.15);
     for (var i = 0; i < 1700 * density; i++) {
       var t = random();
-      var point = lensPoint(true, t);
+      var point = lensPoint(t);
       var fade = Math.pow(Math.sin(Math.PI * t), .8);
       addFixed(point[0] + (random() - .5) * 5, point[1] + (random() - .5) * 16,
         -25 + random() * 9, "lensUpper", (.5 + random() * .5) * fade, .8 + random() * 1.1);
     }
     for (var i = 0; i < 450 * density; i++) {
       var t = random();
-      var point = lensPoint(true, t);
+      var point = lensPoint(t);
       addFixed(point[0] + (random() - .5) * 2, point[1] + (random() - .5) * 5,
         -22 + random() * 5, "lensUpper", .85 * Math.sin(Math.PI * t), .9 + random() * .5);
-    }
-    for (var i = 0; i < 650 * density; i++) {
-      var t = random();
-      var point = lensPoint(false, t);
-      var fade = Math.pow(Math.sin(Math.PI * t), .8);
-      addFixed(point[0] - 6.5 + (random() - .5) * 3, point[1] + (random() - .5) * 6,
-        23 + random() * 9, "lensLower", (.4 + random() * .5) * fade, .7 + random() * 1.1);
     }
     for (var i = 0; i < 500 * density; i++) {
       var x = (random() - .5) * 330;
@@ -133,8 +125,8 @@
     var still = reducedMotion && reducedMotion.matches;
     var light = document.documentElement.getAttribute("data-theme") === "light";
     var colors = light
-      ? { hot: "#bb6729", amber: "#a5612f", blue: "#506ca2", haze: "#826a9a", flare: "#c77c2e", dust: "#7b83a9", lensUpper: "#a96d35", lensLower: "#a76338", streak: "#aa713d", horizonCore: "#2e405a", horizonMid: "#3d5470", horizonRim: "#526b87", horizonSpeck: "#627d9b" }
-      : { hot: "#ffe0a7", amber: "#ffb376", blue: "#a3bdf6", haze: "#b39bd5", flare: "#fff0cc", dust: "#aab5df", lensUpper: "#ffe4b5", lensLower: "#f9bf88", streak: "#ffdda7", horizonCore: "#14243a", horizonMid: "#203651", horizonRim: "#304a68", horizonSpeck: "#405d7d" };
+      ? { hot: "#bb6729", amber: "#a5612f", blue: "#506ca2", haze: "#826a9a", flare: "#c77c2e", dust: "#7b83a9", lensUpper: "#a96d35", streak: "#aa713d", horizonCore: "#2e405a", horizonMid: "#3d5470", horizonRim: "#526b87", horizonSpeck: "#627d9b", horizonActive: "#718dad" }
+      : { hot: "#ffe0a7", amber: "#ffb376", blue: "#a3bdf6", haze: "#b39bd5", flare: "#fff0cc", dust: "#aab5df", lensUpper: "#ffe4b5", streak: "#ffdda7", horizonCore: "#14243a", horizonMid: "#203651", horizonRim: "#304a68", horizonSpeck: "#405d7d", horizonActive: "#55749e" };
     var scale = Math.min(width / 410, height / 350);
     var holeRadius = 34 * scale;
     var rippleRadius = Math.min(72, width * .16);
@@ -181,6 +173,16 @@
       var y = item.y + drift * .6;
       var shimmer = still ? 1 : .84 + .16 * Math.sin(time * .002 + point.phase);
       var opacity = point.opacity * shimmer * (item.depth < 0 ? horizon ? .35 : .55 : 1);
+      var sphereInfluence = 0;
+      if (horizon && !still && hover > .002) {
+        var dx = x - pointerX;
+        var dy = y - pointerY;
+        var edgeRatio = Math.min(1, Math.hypot(x - cx, y - cy) / holeRadius);
+        sphereInfluence = hover * Math.exp(-(dx * dx + dy * dy) / (holeRadius * holeRadius * .9)) * (1 - Math.pow(edgeRatio, 4));
+        x -= dy * .42 * sphereInfluence;
+        y += dx * .42 * sphereInfluence;
+        opacity *= 1 + sphereInfluence * .12;
+      }
       if (!still && hover > .002 && point.face !== "dust" && !horizon) {
         var dx = x - pointerX;
         var dy = y - pointerY;
@@ -196,9 +198,10 @@
       }
       context.globalAlpha = Math.min(1, opacity);
       if (horizon) {
-        var edge = Math.hypot(x - cx, y - cy) / holeRadius;
-        context.fillStyle = point.phase > 5.65 ? colors.horizonSpeck
-          : edge > .87 && y < cy ? colors.horizonRim : edge > .69 ? colors.horizonMid : colors.horizonCore;
+        var rim = Math.hypot(x - cx, y - cy) / holeRadius;
+        context.fillStyle = sphereInfluence > .16 && point.phase > 4.7 ? colors.horizonActive
+          : point.phase > 5.65 ? colors.horizonSpeck
+          : rim > .87 && y < cy ? colors.horizonRim : rim > .69 ? colors.horizonMid : colors.horizonCore;
       } else context.fillStyle = colors[point.face];
       context.beginPath();
       context.arc(x, y, item.size, 0, Math.PI * 2);

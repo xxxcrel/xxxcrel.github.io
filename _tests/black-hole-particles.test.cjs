@@ -88,7 +88,7 @@ function mount({ width = 520, height = 420, reduced = false, ratio = 1, staleSty
 test("renders an accretion disk around a dark event horizon and pauses offscreen", () => {
   const page = mount();
   assert.ok(page.drawn() > 5000);
-  assert.ok(["#ffe0a7", "#ffb376", "#a3bdf6", "#ffe4b5", "#f9bf88", "#14243a"].every(color => page.colors.has(color)));
+  assert.ok(["#ffe0a7", "#ffb376", "#a3bdf6", "#ffe4b5", "#14243a"].every(color => page.colors.has(color)));
   const darkDots = page.fills().filter(dot => ["#14243a", "#203651", "#304a68", "#405d7d"].includes(dot[2]));
   assert.ok(darkDots.length > 2000);
   const sizes = page.arcs().map(arc => arc[2]);
@@ -142,7 +142,7 @@ test("mouse movement disturbs nearby particles without drawing a solid ring", ()
     page.frame(150 + i * 40);
     control.frame(150 + i * 40);
   }
-  const luminous = new Set(["#ffe0a7", "#ffb376", "#ffe4b5", "#f9bf88", "#ffdda7"]);
+  const luminous = new Set(["#ffe0a7", "#ffb376", "#ffe4b5", "#ffdda7"]);
   function nearbyBrightness(site) {
     return site.fills().filter(dot => luminous.has(dot[2]) && Math.hypot(dot[0] - 350, dot[1] - 205) < 35)
       .reduce((sum, dot) => sum + dot[3], 0);
@@ -155,6 +155,21 @@ test("mouse movement disturbs nearby particles without drawing a solid ring", ()
   }
   assert.equal(page.strokes(), 0);
   assert.ok(page.colors.has("#14243a"));
+});
+
+test("hovering the center animates dark particles while preserving the round silhouette", () => {
+  const page = mount();
+  page.frame(100);
+  page.pointer(260, 205);
+  for (let i = 0; i < 15; i++) page.frame(150 + i * 40);
+  const dark = new Set(["#14243a", "#203651", "#304a68", "#405d7d", "#55749e"]);
+  const sphere = page.fills().filter(dot => dark.has(dot[2]));
+  assert.ok(sphere.filter(dot => dot[2] === "#55749e").length > 30);
+  assert.ok(sphere.every(dot => Math.hypot(dot[0] - 260, dot[1] - 205) < 55));
+
+  page.leave();
+  for (let i = 0; i < 60; i++) page.frame(800 + i * 40);
+  assert.equal(page.fills().filter(dot => dot[2] === "#55749e").length, 0);
 });
 
 test("touch and reduced-motion users do not get a mouse ripple", () => {
