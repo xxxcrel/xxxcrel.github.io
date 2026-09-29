@@ -79,17 +79,23 @@ button { font: inherit; }
   letter-spacing: .06em;
 }
 .terminal-header__tools { gap: 12px; }
-.theme-button, .github-link {
-  padding: 8px 12px;
+.theme-button { display: grid; width: 46px; height: 30px; padding: 0; place-items: center; border: 0; border-radius: 999px; background: transparent; cursor: pointer; }
+.theme-button__track { position: relative; display: block; width: 42px; height: 24px; border: 1px solid var(--border); border-radius: 999px; background: var(--surface-raised); transition: background .2s, border-color .2s; }
+.theme-button__thumb { position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; border-radius: 50%; background: var(--accent-bright); box-shadow: 0 1px 5px rgba(0, 0, 0, .18); transition: transform .2s, background .2s; }
+:root[data-theme="light"] .theme-button__track { border-color: var(--accent); background: var(--accent); }
+:root[data-theme="light"] .theme-button__thumb { transform: translateX(18px); background: #fff; }
+.github-link {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
   border: 1px solid var(--border);
-  border-radius: 7px;
+  border-radius: 50%;
   background: var(--surface);
   color: var(--muted);
-  font-size: .81rem;
   text-decoration: none;
-  cursor: pointer;
 }
-.theme-button:hover, .github-link:hover { border-color: var(--accent); color: var(--text); }
+.theme-button:hover .theme-button__track, .github-link:hover { border-color: var(--accent); color: var(--text); }
 .terminal-nav {
   gap: 28px;
   margin-top: 27px;
@@ -148,8 +154,8 @@ button { font: inherit; }
 }
 .terminal-header.is-scrolled .terminal-nav__item.is-active { background: var(--surface-raised); color: var(--accent-bright); }
 .terminal-header.is-scrolled .terminal-header__tools { order: 2; gap: 7px; }
-.terminal-header.is-scrolled .theme-button,
-.terminal-header.is-scrolled .github-link { padding: 7px 10px; border-radius: 999px; }
+.terminal-header.is-scrolled .theme-button { width: 46px; height: 30px; }
+.terminal-header.is-scrolled .github-link { width: 34px; height: 34px; }
 .content-shell { min-height: 55vh; }
 
 /* Home */
@@ -196,6 +202,12 @@ button { font: inherit; }
 .button-link:hover { transform: translateY(-2px); background: var(--accent-bright); }
 .button-link--ghost, .error-page__secondary { border-color: var(--border); background: var(--surface); color: var(--text); }
 .button-link--ghost:hover, .error-page__secondary:hover { background: var(--surface-raised); }
+.hero-actions .button-link { gap: 12px; padding: 8px 8px 8px 17px; border-color: var(--border); border-radius: 999px; background: var(--surface); color: var(--text); box-shadow: inset 0 1px rgba(255, 255, 255, .04); }
+.hero-actions .button-link:hover { border-color: var(--accent); background: var(--surface-raised); }
+.hero-actions__icon { display: grid; width: 28px; height: 28px; place-items: center; border-radius: 50%; background: var(--surface-raised); color: var(--accent); font-size: .9rem; transition: transform .2s, background .2s, color .2s; }
+.hero-actions__primary:hover .hero-actions__icon { transform: translate(1px, -1px); background: var(--accent); color: var(--bg); }
+.hero-actions .button-link--ghost { padding: 9px 13px; border-color: transparent; background: transparent; color: var(--muted); box-shadow: none; }
+.hero-actions .button-link--ghost:hover { color: var(--text); }
 .black-hole-scene {
   position: relative;
   width: 100%;
@@ -367,10 +379,9 @@ button { font: inherit; }
   .site-shell { width: min(calc(100% - 32px), var(--site-width)); }
   .terminal-header.is-scrolled { width: min(calc(100% - 32px), var(--site-width)); }
   .terminal-header { padding-top: 18px; }
-  .terminal-logo__badge, .theme-button__label { display: none; }
+  .terminal-logo__badge { display: none; }
   .terminal-header__tools { gap: 7px; }
   .terminal-header.is-scrolled .github-link { display: none; }
-  .theme-button, .github-link { padding: 7px 9px; }
   .terminal-nav { gap: 21px; margin-top: 22px; }
   .home-hero { gap: 8px; padding: 34px 0 38px; }
   .home-intro h1 { font-size: clamp(2.4rem, 9vw, 3.3rem); }

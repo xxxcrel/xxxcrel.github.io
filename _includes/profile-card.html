@@ -6,8 +6,10 @@
       <span class="terminal-logo__badge">BLOG</span>
     </a>
     <div class="terminal-header__tools">
-      <button class="theme-button" type="button" data-theme-button aria-label="切换明暗主题"><span aria-hidden="true">◐</span><span class="theme-button__label"> 主题</span></button>
-      <a class="github-link" href="https://github.com/{{ site.github_username }}" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+      <button class="theme-button" type="button" role="switch" data-theme-button aria-label="浅色主题" aria-checked="false" title="切换明暗主题"><span class="theme-button__track" aria-hidden="true"><span class="theme-button__thumb"></span></span></button>
+      <a class="github-link" href="https://github.com/{{ site.github_username }}" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-3.162 19.487c.5.09.682-.217.682-.483 0-.237-.009-.866-.014-1.7-2.782.605-3.369-1.34-3.369-1.34-.455-1.157-1.11-1.466-1.11-1.466-.908-.62.069-.607.069-.607 1.004.07 1.532 1.03 1.532 1.03.892 1.53 2.341 1.088 2.91.832.09-.647.35-1.088.636-1.339-2.221-.253-4.555-1.11-4.555-4.944 0-1.091.39-1.984 1.03-2.683-.104-.253-.447-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0 1 12 6.835c.85.004 1.705.115 2.504.338 1.909-1.294 2.747-1.025 2.747-1.025.547 1.377.203 2.394.1 2.647.641.699 1.028 1.592 1.028 2.683 0 3.844-2.337 4.688-4.565 4.936.359.31.679.922.679 1.858 0 1.342-.012 2.423-.012 2.752 0 .269.18.577.688.48A10.003 10.003 0 0 0 12 2Z"/></svg>
+      </a>
     </div>
   </div>
   <nav class="terminal-nav" aria-label="主导航">

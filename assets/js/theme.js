@@ -22,7 +22,7 @@
     function sync(theme) {
       root.setAttribute("data-theme", theme);
       if (themeColor) themeColor.setAttribute("content", theme === "light" ? "#f6f8fe" : "#0b1020");
-      toggle.setAttribute("aria-pressed", theme === "light" ? "true" : "false");
+      toggle.setAttribute("aria-checked", theme === "light" ? "true" : "false");
       window.dispatchEvent(new CustomEvent("site-theme-change", {
         detail: { theme: theme }
       }));

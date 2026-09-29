@@ -9,7 +9,7 @@
   <link rel="icon" href="{{ '/favicon.ico' | relative_url }}" sizes="any">
   <link rel="icon" href="{{ '/assets/images/cheese-mark.svg' | relative_url }}" type="image/svg+xml">
   <meta name="theme-color" content="#0b1020">
-  <script src="{{ '/assets/js/theme.js' | relative_url }}"></script>
+  <script src="{{ '/assets/js/theme.js' | relative_url }}?v={{ site.time | date: '%Y%m%d%H%M%S' }}"></script>
   <link rel="stylesheet" href="{{ '/assets/css/site.css' | relative_url }}?v={{ site.time | date: '%Y%m%d%H%M%S' }}">
 </head>
 <body>
