@@ -17,13 +17,17 @@ description: 克里尔的文章与技术笔记
     <svg class="black-hole-scene__fallback" viewBox="0 0 420 290" aria-hidden="true">
       <defs>
         <radialGradient id="horizon-glow"><stop offset="0" stop-color="#F2A66C" stop-opacity=".4"/><stop offset="1" stop-color="#F2A66C" stop-opacity="0"/></radialGradient>
-        <radialGradient id="horizon-fill" fx="32%" fy="30%"><stop offset="0" stop-color="#233750"/><stop offset=".4" stop-color="#162940"/><stop offset="1" stop-color="#0C192C"/></radialGradient>
-        <radialGradient id="horizon-light-fill" fx="32%" fy="30%"><stop offset="0" stop-color="#657993"/><stop offset="1" stop-color="#2C3D54"/></radialGradient>
+        <radialGradient id="horizon-fill"><stop offset="0" stop-color="#080F1D"/><stop offset=".7" stop-color="#0B1425"/><stop offset="1" stop-color="#14243A"/></radialGradient>
+        <radialGradient id="horizon-light-fill"><stop offset="0" stop-color="#26354D"/><stop offset="1" stop-color="#374B63"/></radialGradient>
+        <linearGradient id="disk-streak"><stop offset="0" stop-color="#FFC58C" stop-opacity="0"/><stop offset=".25" stop-color="#FFC58C" stop-opacity=".6"/><stop offset=".5" stop-color="#FFE7BE"/><stop offset=".75" stop-color="#FFC58C" stop-opacity=".6"/><stop offset="1" stop-color="#FFC58C" stop-opacity="0"/></linearGradient>
       </defs>
       <circle cx="210" cy="145" r="104" fill="url(#horizon-glow)"/>
-      <ellipse cx="210" cy="145" rx="155" ry="53" fill="none" stroke="#FFBF82" stroke-width="7" stroke-dasharray="1 9" stroke-linecap="round" opacity=".65"/>
-      <ellipse cx="210" cy="145" rx="125" ry="42" fill="none" stroke="#9EABEF" stroke-width="4" stroke-dasharray="1 10" stroke-linecap="round" opacity=".4"/>
-      <circle class="black-hole-scene__horizon" cx="210" cy="145" r="39" fill="url(#horizon-fill)" stroke="#8A9BB1" stroke-width="1" opacity=".92"/>
+      <path d="M32 145C115 145 128 74 210 74S305 145 388 145" fill="none" stroke="#FFC58C" stroke-width="17" stroke-linecap="round" opacity=".25"/>
+      <path d="M32 145C115 145 128 74 210 74S305 145 388 145" fill="none" stroke="#FFE4B3" stroke-width="5" stroke-linecap="round" opacity=".85"/>
+      <path d="M20 145H400" fill="none" stroke="url(#disk-streak)" stroke-width="3"/>
+      <circle class="black-hole-scene__horizon" cx="210" cy="145" r="39" fill="url(#horizon-fill)"/>
+      <path d="M163 157C153 228 267 228 257 157" fill="none" stroke="#FFC58C" stroke-width="13" stroke-linecap="round" opacity=".24"/>
+      <path d="M163 157C153 228 267 228 257 157" fill="none" stroke="#FFE4B3" stroke-width="4" stroke-linecap="round" opacity=".75"/>
     </svg>
     <canvas data-black-hole-particles aria-hidden="true"></canvas>
     <span class="black-hole-scene__label" aria-hidden="true">BLACK HOLE <span>/ MOVE TO INTERACT</span></span>
