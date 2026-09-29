@@ -25,7 +25,6 @@ function mount({ width = 520, height = 420, reduced = false, ratio = 1, staleSty
     clearRect() { arcs = []; fills = []; strokes = 0; }, save() {}, restore() {}, translate() {}, rotate() {}, scale() {}, setTransform() {}, beginPath() {}, fillRect() {},
     createRadialGradient() { return { addColorStop(offset, color) { colors.add(color); } }; },
     arc(x, y, radius) { arcs.push([x, y, radius]); },
-    ellipse(x, y, rx, ry) { arcs.push([x, y, Math.max(rx, ry)]); },
     stroke() { strokes++; },
     fill() { drawn++; colors.add(this.fillStyle); fills.push([arcs.at(-1)[0], arcs.at(-1)[1], this.fillStyle]); }
   };
@@ -132,18 +131,18 @@ test("mouse movement rotates an asymmetric disk flare in three dimensions", () =
 test("mouse movement opens a local ripple that settles after leaving", () => {
   const page = mount();
   page.frame(100);
-  assert.equal(page.strokes(), 4);
+  assert.equal(page.strokes(), 0);
   page.pointer(260, 205);
   for (let i = 0; i < 15; i++) {
     page.frame(150 + i * 40);
   }
-  assert.equal(page.strokes(), 6);
+  assert.equal(page.strokes(), 2);
 
   page.leave();
   for (let i = 0; i < 60; i++) {
     page.frame(800 + i * 40);
   }
-  assert.equal(page.strokes(), 4);
+  assert.equal(page.strokes(), 0);
   assert.ok(page.colors.has("#233750"));
 });
 
@@ -152,12 +151,12 @@ test("touch and reduced-motion users do not get a mouse ripple", () => {
   page.pointer(260, 205);
   assert.equal(page.frames.size, 0);
   page.setTheme("light");
-  assert.equal(page.strokes(), 4);
+  assert.equal(page.strokes(), 0);
 
   const touch = mount();
   touch.pointer(260, 205, "touch");
   touch.frame(100);
-  assert.equal(touch.strokes(), 4);
+  assert.equal(touch.strokes(), 0);
 });
 
 test("reduces detail on small screens and keeps a still image for reduced motion", () => {

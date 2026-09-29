@@ -153,14 +153,6 @@
 
     projected.forEach(function (item) { if (item.depth < 0) dot(item); });
 
-    // The far side of the tilted disk passes behind the event horizon.
-    context.strokeStyle = light ? "#9d7d65" : "#d4af90";
-    context.lineWidth = 2;
-    context.globalAlpha = .25;
-    context.beginPath();
-    context.ellipse(cx, cy, 80 * scale, 80 * scale * Math.sin(pitch), 0, Math.PI, Math.PI * 2);
-    context.stroke();
-
     context.save();
     context.globalAlpha = 1;
     context.shadowColor = light ? "#a89183" : "#d79f79";
@@ -176,31 +168,6 @@
     context.restore();
 
     projected.forEach(function (item) { if (item.depth >= 0) dot(item); });
-
-    // A brighter near-side arc and a dimmer upper rim create depth without a
-    // uniform bright outline around the sphere.
-    context.strokeStyle = light ? "#a67956" : "#ffd19b";
-    context.shadowColor = light ? "#c69572" : "#ffc18b";
-    context.shadowBlur = 10;
-    context.lineWidth = 2.6;
-    context.globalAlpha = .55;
-    context.beginPath();
-    context.ellipse(cx, cy, 80 * scale, 80 * scale * Math.sin(pitch), 0, 0, Math.PI);
-    context.stroke();
-    context.shadowBlur = 0;
-
-    context.strokeStyle = light ? "#657e9f" : "#91accf";
-    context.lineWidth = 1.2;
-    context.globalAlpha = .32;
-    context.beginPath();
-    context.arc(cx, cy, holeRadius + 4, Math.PI, Math.PI * 2);
-    context.stroke();
-    context.strokeStyle = light ? "#ae8668" : "#e3be95";
-    context.lineWidth = 1.8;
-    context.globalAlpha = .65;
-    context.beginPath();
-    context.arc(cx, cy, holeRadius + 4, 0, Math.PI);
-    context.stroke();
 
     if (!still && hover > .01) {
       context.strokeStyle = light ? "#627db1" : "#b6caf9";
