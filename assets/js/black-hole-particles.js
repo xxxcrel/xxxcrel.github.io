@@ -153,14 +153,22 @@
 
     projected.forEach(function (item) { if (item.depth < 0) dot(item); });
 
+    // The far side of the tilted disk passes behind the event horizon.
+    context.strokeStyle = light ? "#9d7d65" : "#d4af90";
+    context.lineWidth = 2;
+    context.globalAlpha = .25;
+    context.beginPath();
+    context.ellipse(cx, cy, 80 * scale, 80 * scale * Math.sin(pitch), 0, Math.PI, Math.PI * 2);
+    context.stroke();
+
     context.save();
     context.globalAlpha = 1;
     context.shadowColor = light ? "#a89183" : "#d79f79";
-    context.shadowBlur = 17;
-    var horizon = context.createRadialGradient(cx, cy, 0, cx, cy, holeRadius);
-    horizon.addColorStop(0, light ? "#26354d" : "#0a1020");
-    horizon.addColorStop(.68, light ? "#354761" : "#101a2e");
-    horizon.addColorStop(1, light ? "#596e84" : "#1c2d46");
+    context.shadowBlur = 13;
+    var horizon = context.createRadialGradient(cx - holeRadius * .38, cy - holeRadius * .42, 0, cx, cy, holeRadius * 1.15);
+    horizon.addColorStop(0, light ? "#657993" : "#233750");
+    horizon.addColorStop(.4, light ? "#455b76" : "#162940");
+    horizon.addColorStop(1, light ? "#2c3d54" : "#0c192c");
     context.fillStyle = horizon;
     context.beginPath();
     context.arc(cx, cy, holeRadius, 0, Math.PI * 2);
@@ -169,15 +177,30 @@
 
     projected.forEach(function (item) { if (item.depth >= 0) dot(item); });
 
-    context.strokeStyle = light ? "#9f7d63" : "#e5c4a2";
-    context.shadowColor = light ? "#bc987b" : "#dfae87";
+    // A brighter near-side arc and a dimmer upper rim create depth without a
+    // uniform bright outline around the sphere.
+    context.strokeStyle = light ? "#a67956" : "#ffd19b";
+    context.shadowColor = light ? "#c69572" : "#ffc18b";
     context.shadowBlur = 10;
-    context.lineWidth = 1.5;
+    context.lineWidth = 2.6;
     context.globalAlpha = .55;
     context.beginPath();
-    context.arc(cx, cy, holeRadius + 5, 0, Math.PI * 2);
+    context.ellipse(cx, cy, 80 * scale, 80 * scale * Math.sin(pitch), 0, 0, Math.PI);
     context.stroke();
     context.shadowBlur = 0;
+
+    context.strokeStyle = light ? "#657e9f" : "#91accf";
+    context.lineWidth = 1.2;
+    context.globalAlpha = .32;
+    context.beginPath();
+    context.arc(cx, cy, holeRadius + 4, Math.PI, Math.PI * 2);
+    context.stroke();
+    context.strokeStyle = light ? "#ae8668" : "#e3be95";
+    context.lineWidth = 1.8;
+    context.globalAlpha = .65;
+    context.beginPath();
+    context.arc(cx, cy, holeRadius + 4, 0, Math.PI);
+    context.stroke();
 
     if (!still && hover > .01) {
       context.strokeStyle = light ? "#627db1" : "#b6caf9";
