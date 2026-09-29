@@ -49,6 +49,23 @@
     function add(radius, angle, y, face, opacity, size, speed) {
       points.push({ radius: radius, angle: angle, y: y, face: face, opacity: opacity, size: size || .65 + random() * 1.25, speed: speed || 0, phase: random() * Math.PI * 2 });
     }
+    function addFixed(x, y, z, face, opacity, size) {
+      points.push({ x: x, y: y, z: z, face: face, opacity: opacity, size: size, phase: random() * Math.PI * 2 });
+    }
+    function cubic(a, b, c, d, t) {
+      var inverse = 1 - t;
+      return inverse * inverse * inverse * a + 3 * inverse * inverse * t * b + 3 * inverse * t * t * c + t * t * t * d;
+    }
+    function lensPoint(upper, t) {
+      var r = 34;
+      if (!upper) return [cubic(-1.42 * r, -1.45 * r, 1.45 * r, 1.42 * r, t), cubic(.08 * r, 2.3 * r, 2.3 * r, .08 * r, t)];
+      if (t < .5) {
+        t *= 2;
+        return [cubic(-3.1 * r, -1.65 * r, -1.55 * r, 0, t), cubic(0, -.12 * r, -1.86 * r, -1.86 * r, t)];
+      }
+      t = (t - .5) * 2;
+      return [cubic(0, 1.55 * r, 1.65 * r, 3.1 * r, t), cubic(-1.86 * r, -1.86 * r, -.12 * r, 0, t)];
+    }
 
     points = [];
     var density = width < 480 ? .55 : 1;
@@ -67,6 +84,38 @@
     }
     // A bright asymmetric knot makes the disk's three-dimensional rotation legible.
     add(129, .7, -2, "flare", .95, 3.5, 1.15);
+    for (var i = 0; i < 1050 * density; i++) {
+      var t = random();
+      var point = lensPoint(true, t);
+      var fade = Math.pow(Math.sin(Math.PI * t), .8);
+      addFixed(point[0] + (random() - .5) * 4, point[1] + (random() - .5) * 8,
+        -25 + random() * 9, "lensUpper", (.45 + random() * .5) * fade, .7 + random() * 1.15);
+    }
+    for (var i = 0; i < 650 * density; i++) {
+      var t = random();
+      var point = lensPoint(false, t);
+      var fade = Math.pow(Math.sin(Math.PI * t), .8);
+      addFixed(point[0] + (random() - .5) * 3, point[1] + (random() - .5) * 6,
+        23 + random() * 9, "lensLower", (.4 + random() * .5) * fade, .7 + random() * 1.1);
+    }
+    for (var i = 0; i < 500 * density; i++) {
+      var x = (random() - .5) * 330;
+      var fade = Math.pow(Math.max(0, 1 - Math.abs(x) / 165), .7);
+      addFixed(x, (random() - .5) * 5, (random() - .5) * 16, "streak", (.4 + random() * .5) * fade, .65 + random() * 1.05);
+    }
+    for (var i = 0; i < 2600 * density; i++) {
+      var angle = random() * Math.PI * 2;
+      var radius = 34 * Math.sqrt(random());
+      addFixed(Math.cos(angle) * radius, Math.sin(angle) * radius, Math.sqrt(34 * 34 - radius * radius),
+        "horizon", .78 + random() * .2, 1.55 + random() * .9);
+    }
+    for (var i = 0; i < 400 * density; i++) {
+      var angle = random() * Math.PI * 2;
+      var height = random() * 2 - 1;
+      var radius = Math.sqrt(1 - height * height) * 34;
+      addFixed(Math.cos(angle) * radius, height * 34, Math.sin(angle) * radius,
+        "horizon", .58 + random() * .25, 1.5 + random() * .85);
+    }
     for (var i = 0; i < 75 * density; i++) {
       points.push({ x: -225 + random() * 450, y: -165 + random() * 330, z: -120 + random() * 240,
         face: "dust", opacity: .08 + random() * .22, size: .5 + random() * .85, phase: random() * Math.PI * 2 });
@@ -78,8 +127,8 @@
     var still = reducedMotion && reducedMotion.matches;
     var light = document.documentElement.getAttribute("data-theme") === "light";
     var colors = light
-      ? { hot: "#bb6729", amber: "#a5612f", blue: "#506ca2", haze: "#826a9a", flare: "#c77c2e", dust: "#7b83a9" }
-      : { hot: "#ffe0a7", amber: "#ffb376", blue: "#a3bdf6", haze: "#b39bd5", flare: "#fff0cc", dust: "#aab5df" };
+      ? { hot: "#bb6729", amber: "#a5612f", blue: "#506ca2", haze: "#826a9a", flare: "#c77c2e", dust: "#7b83a9", lensUpper: "#a96d35", lensLower: "#a76338", streak: "#aa713d", horizonCore: "#2a3a53", horizonMid: "#384e69", horizonRim: "#566c87", horizonSpeck: "#627997" }
+      : { hot: "#ffe0a7", amber: "#ffb376", blue: "#a3bdf6", haze: "#b39bd5", flare: "#fff0cc", dust: "#aab5df", lensUpper: "#ffe4b5", lensLower: "#f9bf88", streak: "#ffdda7", horizonCore: "#091322", horizonMid: "#101e32", horizonRim: "#1a2b43", horizonSpeck: "#243955" };
     var scale = Math.min(width / 410, height / 350);
     var holeRadius = 34 * scale;
     var rippleRadius = Math.min(72, width * .16);
@@ -97,23 +146,16 @@
     var cx = width * .5 + offsetX;
     var cy = height * .49 + offsetY + (still ? 0 : Math.sin(time * .0007) * 4);
 
-    var glow = context.createRadialGradient(cx, cy, holeRadius * .6, cx, cy, 165 * scale);
-    glow.addColorStop(0, "rgba(255, 180, 110, 0)");
-    glow.addColorStop(.35, light ? "rgba(197, 126, 70, .12)" : "rgba(255, 161, 93, .12)");
-    glow.addColorStop(.65, light ? "rgba(91, 124, 184, .045)" : "rgba(123, 152, 218, .055)");
-    glow.addColorStop(1, "rgba(100, 120, 190, 0)");
-    context.fillStyle = glow;
-    context.fillRect(cx - 165 * scale, cy - 165 * scale, 330 * scale, 330 * scale);
-
     var cosY = Math.cos(yaw);
     var sinY = Math.sin(yaw);
     var cosP = Math.cos(pitch);
     var sinP = Math.sin(pitch);
     var projected = points.map(function (point) {
-      var angle = point.angle + (still || point.face === "dust" ? 0 : time * .00014 * point.speed);
-      var px = point.face === "dust" ? point.x : Math.cos(angle) * point.radius;
-      var pz = point.face === "dust" ? point.z : Math.sin(angle) * point.radius;
-      var py = point.y + (point.face === "dust" ? 0 : Math.sin(angle * 2 + point.radius * .03) * 2);
+      var orbit = point.radius !== undefined;
+      var angle = orbit ? point.angle + (still ? 0 : time * .00014 * point.speed) : 0;
+      var px = orbit ? Math.cos(angle) * point.radius : point.x;
+      var pz = orbit ? Math.sin(angle) * point.radius : point.z;
+      var py = point.y + (orbit ? Math.sin(angle * 2 + point.radius * .03) * 2 : 0);
       var x = px * cosY + pz * sinY;
       var z = pz * cosY - px * sinY;
       var y = py * cosP + z * sinP;
@@ -124,54 +166,16 @@
     });
     projected.sort(function (a, b) { return a.depth - b.depth; });
 
-    function lensPath(upper) {
-      context.beginPath();
-      if (upper) {
-        context.moveTo(cx - holeRadius * 3.1, cy);
-        context.bezierCurveTo(cx - holeRadius * 1.65, cy - holeRadius * .12,
-          cx - holeRadius * 1.55, cy - holeRadius * 1.86, cx, cy - holeRadius * 1.86);
-        context.bezierCurveTo(cx + holeRadius * 1.55, cy - holeRadius * 1.86,
-          cx + holeRadius * 1.65, cy - holeRadius * .12, cx + holeRadius * 3.1, cy);
-      } else {
-        context.moveTo(cx - holeRadius * 1.42, cy + holeRadius * .08);
-        context.bezierCurveTo(cx - holeRadius * 1.45, cy + holeRadius * 2.3,
-          cx + holeRadius * 1.45, cy + holeRadius * 2.3, cx + holeRadius * 1.42, cy + holeRadius * .08);
-      }
-    }
-
-    function paintLens(upper) {
-      context.save();
-      var reach = holeRadius * (upper ? 3.1 : 1.42);
-      var tint = light ? "173,116,67" : "255,214,160";
-      var fade = context.createLinearGradient(cx - reach, cy, cx + reach, cy);
-      fade.addColorStop(0, "rgba(" + tint + ",0)");
-      fade.addColorStop(.18, "rgba(" + tint + ",.55)");
-      fade.addColorStop(.34, "rgba(" + tint + ",1)");
-      fade.addColorStop(.66, "rgba(" + tint + ",1)");
-      fade.addColorStop(.82, "rgba(" + tint + ",.55)");
-      fade.addColorStop(1, "rgba(" + tint + ",0)");
-      context.strokeStyle = fade;
-      context.shadowColor = light ? "#ba8c5a" : "#ffc38c";
-      context.lineCap = "round";
-      for (var layer = 0; layer < 3; layer++) {
-        context.lineWidth = (upper ? 17 : 13) * scale / (layer + 1);
-        context.globalAlpha = (upper ? .12 : .08) + layer * (upper ? .19 : .12);
-        context.shadowBlur = layer === 0 ? 22 : 10;
-        lensPath(upper);
-        context.stroke();
-      }
-      context.restore();
-    }
-
     function dot(item) {
       var point = item.point;
-      if (Math.hypot(item.x - cx, item.y - cy) < holeRadius + 2) return;
+      var horizon = point.face === "horizon";
+      if (!horizon && Math.hypot(item.x - cx, item.y - cy) < holeRadius + 2) return;
       var drift = still ? 0 : Math.sin(time * .0008 + point.phase) * (point.face === "dust" ? 2 : .45);
       var x = item.x + drift;
       var y = item.y + drift * .6;
       var shimmer = still ? 1 : .84 + .16 * Math.sin(time * .002 + point.phase);
-      var opacity = point.opacity * shimmer * (item.depth < 0 ? .55 : 1);
-      if (!still && hover > .002 && point.face !== "dust") {
+      var opacity = point.opacity * shimmer * (item.depth < 0 && !horizon ? .55 : 1);
+      if (!still && hover > .002 && point.face !== "dust" && !horizon) {
         var dx = x - pointerX;
         var dy = y - pointerY;
         var distance = Math.hypot(dx, dy);
@@ -185,78 +189,19 @@
         }
       }
       context.globalAlpha = Math.min(1, opacity);
-      context.fillStyle = colors[point.face];
+      if (horizon) {
+        var edge = Math.hypot(x - cx, y - cy) / holeRadius;
+        context.fillStyle = point.phase > 5.55 ? colors.horizonSpeck
+          : edge > .9 && y < cy ? colors.horizonRim : edge > .75 ? colors.horizonMid : colors.horizonCore;
+      } else context.fillStyle = colors[point.face];
       context.beginPath();
       context.arc(x, y, item.size, 0, Math.PI * 2);
       context.fill();
     }
 
-    projected.forEach(function (item) { if (item.depth < 0) dot(item); });
-
-    // The thin disk crosses the center; its far side is lensed above the shadow.
-    var streak = context.createLinearGradient(cx - 165 * scale, cy, cx + 165 * scale, cy);
-    streak.addColorStop(0, "rgba(255, 185, 112, 0)");
-    streak.addColorStop(.2, light ? "rgba(169, 104, 46, .35)" : "rgba(255, 197, 128, .48)");
-    streak.addColorStop(.5, light ? "rgba(181, 116, 58, .6)" : "rgba(255, 225, 178, .8)");
-    streak.addColorStop(.8, light ? "rgba(169, 104, 46, .35)" : "rgba(255, 197, 128, .48)");
-    streak.addColorStop(1, "rgba(255, 185, 112, 0)");
-    context.save();
-    context.strokeStyle = streak;
-    context.shadowColor = light ? "#c79367" : "#ffd1a2";
-    context.shadowBlur = 12;
-    context.lineWidth = 2.1 * scale;
-    context.globalAlpha = .8;
-    context.beginPath();
-    context.moveTo(cx - 165 * scale, cy);
-    context.lineTo(cx + 165 * scale, cy);
-    context.stroke();
-    context.restore();
-    paintLens(true);
-
-    context.save();
-    context.globalAlpha = 1;
-    context.shadowColor = light ? "#b39a84" : "#b79575";
-    context.shadowBlur = 8;
-    var horizon = context.createRadialGradient(cx, cy, 0, cx, cy, holeRadius * 1.12);
-    horizon.addColorStop(0, light ? "#26354d" : "#080f1d");
-    horizon.addColorStop(.7, light ? "#2c3d53" : "#0b1425");
-    horizon.addColorStop(1, light ? "#374b63" : "#14243a");
-    context.fillStyle = horizon;
-    context.beginPath();
-    context.arc(cx, cy, holeRadius, 0, Math.PI * 2);
-    context.fill();
-    context.restore();
-
-    projected.forEach(function (item) { if (item.depth >= 0) dot(item); });
-
-    paintLens(false);
-    // Keep the near-side disk narrow instead of drawing a full Saturn-like ring.
-    context.save();
-    context.strokeStyle = light ? "rgba(160, 99, 49, .45)" : "rgba(255, 216, 165, .58)";
-    context.lineWidth = 1.1 * scale;
-    context.beginPath();
-    context.moveTo(cx - 165 * scale, cy + 2 * scale);
-    context.lineTo(cx - holeRadius - 4 * scale, cy + 2 * scale);
-    context.moveTo(cx + holeRadius + 4 * scale, cy + 2 * scale);
-    context.lineTo(cx + 165 * scale, cy + 2 * scale);
-    context.stroke();
-    context.restore();
-
-    if (!still && hover > .01) {
-      context.strokeStyle = light ? "#627db1" : "#b6caf9";
-      context.shadowColor = light ? "#7995c7" : "#a9c1ff";
-      context.shadowBlur = 12;
-      context.lineWidth = 1.3;
-      context.globalAlpha = hover * .5;
-      context.beginPath();
-      context.arc(pointerX, pointerY, rippleRadius * .72 + Math.sin(time * .002) * 2, 0, Math.PI * 2);
-      context.stroke();
-      context.shadowBlur = 0;
-      context.globalAlpha = hover * .18;
-      context.beginPath();
-      context.arc(pointerX, pointerY, rippleRadius + Math.sin(time * .0015) * 3, 0, Math.PI * 2);
-      context.stroke();
-    }
+    projected.forEach(function (item) { if (item.point.face !== "horizon" && item.depth < 0) dot(item); });
+    projected.forEach(function (item) { if (item.point.face === "horizon") dot(item); });
+    projected.forEach(function (item) { if (item.point.face !== "horizon" && item.depth >= 0) dot(item); });
     context.globalAlpha = 1;
   }
 
