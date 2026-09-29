@@ -84,18 +84,24 @@
     }
     // A bright asymmetric knot makes the disk's three-dimensional rotation legible.
     add(129, .7, -2, "flare", .95, 3.5, 1.15);
-    for (var i = 0; i < 1050 * density; i++) {
+    for (var i = 0; i < 1700 * density; i++) {
       var t = random();
       var point = lensPoint(true, t);
       var fade = Math.pow(Math.sin(Math.PI * t), .8);
-      addFixed(point[0] + (random() - .5) * 4, point[1] + (random() - .5) * 8,
-        -25 + random() * 9, "lensUpper", (.45 + random() * .5) * fade, .7 + random() * 1.15);
+      addFixed(point[0] + (random() - .5) * 5, point[1] + (random() - .5) * 16,
+        -25 + random() * 9, "lensUpper", (.5 + random() * .5) * fade, .8 + random() * 1.1);
+    }
+    for (var i = 0; i < 450 * density; i++) {
+      var t = random();
+      var point = lensPoint(true, t);
+      addFixed(point[0] + (random() - .5) * 2, point[1] + (random() - .5) * 5,
+        -22 + random() * 5, "lensUpper", .85 * Math.sin(Math.PI * t), .9 + random() * .5);
     }
     for (var i = 0; i < 650 * density; i++) {
       var t = random();
       var point = lensPoint(false, t);
       var fade = Math.pow(Math.sin(Math.PI * t), .8);
-      addFixed(point[0] + (random() - .5) * 3, point[1] + (random() - .5) * 6,
+      addFixed(point[0] - 6.5 + (random() - .5) * 3, point[1] + (random() - .5) * 6,
         23 + random() * 9, "lensLower", (.4 + random() * .5) * fade, .7 + random() * 1.1);
     }
     for (var i = 0; i < 500 * density; i++) {
@@ -103,18 +109,18 @@
       var fade = Math.pow(Math.max(0, 1 - Math.abs(x) / 165), .7);
       addFixed(x, (random() - .5) * 5, (random() - .5) * 16, "streak", (.4 + random() * .5) * fade, .65 + random() * 1.05);
     }
-    for (var i = 0; i < 2600 * density; i++) {
+    for (var i = 0; i < 2500 * density; i++) {
       var angle = random() * Math.PI * 2;
       var radius = 34 * Math.sqrt(random());
       addFixed(Math.cos(angle) * radius, Math.sin(angle) * radius, Math.sqrt(34 * 34 - radius * radius),
-        "horizon", .78 + random() * .2, 1.55 + random() * .9);
+        "horizon", .72 + random() * .25, .8 + random() * .65);
     }
-    for (var i = 0; i < 400 * density; i++) {
+    for (var i = 0; i < 300 * density; i++) {
       var angle = random() * Math.PI * 2;
-      var height = random() * 2 - 1;
-      var radius = Math.sqrt(1 - height * height) * 34;
-      addFixed(Math.cos(angle) * radius, height * 34, Math.sin(angle) * radius,
-        "horizon", .58 + random() * .25, 1.5 + random() * .85);
+      var normalY = random() * 2 - 1;
+      var radius = Math.sqrt(1 - normalY * normalY) * 34;
+      addFixed(Math.cos(angle) * radius, normalY * 34, Math.sin(angle) * radius,
+        "horizon", .55 + random() * .25, .8 + random() * .55);
     }
     for (var i = 0; i < 75 * density; i++) {
       points.push({ x: -225 + random() * 450, y: -165 + random() * 330, z: -120 + random() * 240,
@@ -127,8 +133,8 @@
     var still = reducedMotion && reducedMotion.matches;
     var light = document.documentElement.getAttribute("data-theme") === "light";
     var colors = light
-      ? { hot: "#bb6729", amber: "#a5612f", blue: "#506ca2", haze: "#826a9a", flare: "#c77c2e", dust: "#7b83a9", lensUpper: "#a96d35", lensLower: "#a76338", streak: "#aa713d", horizonCore: "#2a3a53", horizonMid: "#384e69", horizonRim: "#566c87", horizonSpeck: "#627997" }
-      : { hot: "#ffe0a7", amber: "#ffb376", blue: "#a3bdf6", haze: "#b39bd5", flare: "#fff0cc", dust: "#aab5df", lensUpper: "#ffe4b5", lensLower: "#f9bf88", streak: "#ffdda7", horizonCore: "#091322", horizonMid: "#101e32", horizonRim: "#1a2b43", horizonSpeck: "#243955" };
+      ? { hot: "#bb6729", amber: "#a5612f", blue: "#506ca2", haze: "#826a9a", flare: "#c77c2e", dust: "#7b83a9", lensUpper: "#a96d35", lensLower: "#a76338", streak: "#aa713d", horizonCore: "#2e405a", horizonMid: "#3d5470", horizonRim: "#526b87", horizonSpeck: "#627d9b" }
+      : { hot: "#ffe0a7", amber: "#ffb376", blue: "#a3bdf6", haze: "#b39bd5", flare: "#fff0cc", dust: "#aab5df", lensUpper: "#ffe4b5", lensLower: "#f9bf88", streak: "#ffdda7", horizonCore: "#14243a", horizonMid: "#203651", horizonRim: "#304a68", horizonSpeck: "#405d7d" };
     var scale = Math.min(width / 410, height / 350);
     var holeRadius = 34 * scale;
     var rippleRadius = Math.min(72, width * .16);
@@ -174,7 +180,7 @@
       var x = item.x + drift;
       var y = item.y + drift * .6;
       var shimmer = still ? 1 : .84 + .16 * Math.sin(time * .002 + point.phase);
-      var opacity = point.opacity * shimmer * (item.depth < 0 && !horizon ? .55 : 1);
+      var opacity = point.opacity * shimmer * (item.depth < 0 ? horizon ? .35 : .55 : 1);
       if (!still && hover > .002 && point.face !== "dust" && !horizon) {
         var dx = x - pointerX;
         var dy = y - pointerY;
@@ -191,8 +197,8 @@
       context.globalAlpha = Math.min(1, opacity);
       if (horizon) {
         var edge = Math.hypot(x - cx, y - cy) / holeRadius;
-        context.fillStyle = point.phase > 5.55 ? colors.horizonSpeck
-          : edge > .9 && y < cy ? colors.horizonRim : edge > .75 ? colors.horizonMid : colors.horizonCore;
+        context.fillStyle = point.phase > 5.65 ? colors.horizonSpeck
+          : edge > .87 && y < cy ? colors.horizonRim : edge > .69 ? colors.horizonMid : colors.horizonCore;
       } else context.fillStyle = colors[point.face];
       context.beginPath();
       context.arc(x, y, item.size, 0, Math.PI * 2);

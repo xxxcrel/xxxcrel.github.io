@@ -88,8 +88,8 @@ function mount({ width = 520, height = 420, reduced = false, ratio = 1, staleSty
 test("renders an accretion disk around a dark event horizon and pauses offscreen", () => {
   const page = mount();
   assert.ok(page.drawn() > 5000);
-  assert.ok(["#ffe0a7", "#ffb376", "#a3bdf6", "#ffe4b5", "#f9bf88", "#091322"].every(color => page.colors.has(color)));
-  const darkDots = page.fills().filter(dot => ["#091322", "#101e32", "#1a2b43", "#243955"].includes(dot[2]));
+  assert.ok(["#ffe0a7", "#ffb376", "#a3bdf6", "#ffe4b5", "#f9bf88", "#14243a"].every(color => page.colors.has(color)));
+  const darkDots = page.fills().filter(dot => ["#14243a", "#203651", "#304a68", "#405d7d"].includes(dot[2]));
   assert.ok(darkDots.length > 2000);
   const sizes = page.arcs().map(arc => arc[2]);
   assert.ok(Math.max(...sizes) > Math.min(...sizes) * 2);
@@ -154,7 +154,7 @@ test("mouse movement disturbs nearby particles without drawing a solid ring", ()
     page.frame(800 + i * 40);
   }
   assert.equal(page.strokes(), 0);
-  assert.ok(page.colors.has("#091322"));
+  assert.ok(page.colors.has("#14243a"));
 });
 
 test("touch and reduced-motion users do not get a mouse ripple", () => {
@@ -182,5 +182,5 @@ test("reduces detail on small screens and keeps a still image for reduced motion
   mobile.setReduced(true);
   assert.equal(mobile.frames.size, 0);
   mobile.setTheme("light");
-  assert.ok(mobile.colors.has("#2a3a53"));
+  assert.ok(mobile.colors.has("#2e405a"));
 });
