@@ -16,7 +16,7 @@
   --font-body: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
   --font-mono: ui-monospace, "Cascadia Code", "JetBrains Mono", SFMono-Regular, Consolas, monospace;
   --site-width: 1120px;
-  --article-width: 780px;
+  --article-width: var(--site-width);
 }
 
 :root[data-theme="light"] {
@@ -273,7 +273,6 @@ button { font: inherit; }
 .pagination span:not(.is-current) { opacity: .5; }
 
 /* Pages and posts */
-.post-page { --article-width: 920px; }
 .post-page > .article-header, .post-page > .article-body, .post-page > .post-nav { margin-inline: auto; }
 .content-header, .article-header { max-width: var(--article-width); padding: 82px 0 38px; border-bottom: 1px solid var(--border); }
 .content-title { margin: 11px 0 12px; font-size: clamp(2.4rem, 5vw, 4.1rem); line-height: 1.18; letter-spacing: -.055em; overflow-wrap: anywhere; }
