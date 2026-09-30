@@ -40,6 +40,20 @@
   var hover = 0;
   var targetHover = 0;
 
+  function cubic(a, b, c, d, t) {
+    var inverse = 1 - t;
+    return inverse * inverse * inverse * a + 3 * inverse * inverse * t * b + 3 * inverse * t * t * c + t * t * t * d;
+  }
+  function lensPoint(t) {
+    var r = 34;
+    if (t < .5) {
+      t *= 2;
+      return [cubic(-3.1 * r, -1.65 * r, -1.55 * r, 0, t), cubic(0, -.12 * r, -1.08 * r, -1.08 * r, t)];
+    }
+    t = (t - .5) * 2;
+    return [cubic(0, 1.55 * r, 1.65 * r, 3.1 * r, t), cubic(-1.08 * r, -1.08 * r, -.12 * r, 0, t)];
+  }
+
   function createPoints() {
     var seed = 271828;
     function random() {
@@ -52,18 +66,14 @@
     function addFixed(x, y, z, face, opacity, size) {
       points.push({ x: x, y: y, z: z, face: face, opacity: opacity, size: size, phase: random() * Math.PI * 2 });
     }
-    function cubic(a, b, c, d, t) {
-      var inverse = 1 - t;
-      return inverse * inverse * inverse * a + 3 * inverse * inverse * t * b + 3 * inverse * t * t * c + t * t * t * d;
-    }
-    function lensPoint(t) {
-      var r = 34;
-      if (t < .5) {
-        t *= 2;
-        return [cubic(-3.1 * r, -1.65 * r, -1.55 * r, 0, t), cubic(0, -.12 * r, -1.86 * r, -1.86 * r, t)];
-      }
-      t = (t - .5) * 2;
-      return [cubic(0, 1.55 * r, 1.65 * r, 3.1 * r, t), cubic(-1.86 * r, -1.86 * r, -.12 * r, 0, t)];
+    function addLens(t, scatterX, scatterY, z, opacity, size, fadeExponent) {
+      var point = lensPoint(t);
+      addFixed(point[0] + scatterX, point[1] + scatterY, z, "lensUpper", opacity, size);
+      var particle = points[points.length - 1];
+      particle.initialT = t;
+      particle.scatterX = scatterX;
+      particle.scatterY = scatterY;
+      particle.fadeExponent = fadeExponent;
     }
 
     points = [];
@@ -83,18 +93,15 @@
     }
     // A bright asymmetric knot makes the disk's three-dimensional rotation legible.
     add(129, .7, -2, "flare", .95, 3.5, 1.15);
-    for (var i = 0; i < 1700 * density; i++) {
+    for (var i = 0; i < 3000 * density; i++) {
       var t = random();
-      var point = lensPoint(t);
-      var fade = Math.pow(Math.sin(Math.PI * t), .8);
-      addFixed(point[0] + (random() - .5) * 5, point[1] + (random() - .5) * 16,
-        -25 + random() * 9, "lensUpper", (.5 + random() * .5) * fade, .8 + random() * 1.1);
+      addLens(t, (random() - .5) * 5, (random() - .5) * 36,
+        -25 + random() * 9, .5 + random() * .5, .8 + random() * 1.1, .8);
     }
-    for (var i = 0; i < 450 * density; i++) {
+    for (var i = 0; i < 900 * density; i++) {
       var t = random();
-      var point = lensPoint(t);
-      addFixed(point[0] + (random() - .5) * 2, point[1] + (random() - .5) * 5,
-        -22 + random() * 5, "lensUpper", .85 * Math.sin(Math.PI * t), .9 + random() * .5);
+      addLens(t, (random() - .5) * 2, (random() - .5) * 12,
+        -22 + random() * 5, .85, .9 + random() * .5, 1);
     }
     for (var i = 0; i < 500 * density; i++) {
       var x = (random() - .5) * 330;
@@ -102,9 +109,10 @@
       addFixed(x, (random() - .5) * 5, (random() - .5) * 16, "streak", (.4 + random() * .5) * fade, .65 + random() * 1.05);
     }
     for (var i = 0; i < 2500 * density; i++) {
+      var normalZ = random() * 2 - 1;
       var angle = random() * Math.PI * 2;
-      var radius = 34 * Math.sqrt(random());
-      addFixed(Math.cos(angle) * radius, Math.sin(angle) * radius, Math.sqrt(34 * 34 - radius * radius),
+      var radius = 34 * Math.sqrt(1 - normalZ * normalZ);
+      addFixed(Math.cos(angle) * radius, Math.sin(angle) * radius, normalZ * 34,
         "horizon", .72 + random() * .25, .8 + random() * .65);
     }
     for (var i = 0; i < 300 * density; i++) {
@@ -148,31 +156,52 @@
     var sinY = Math.sin(yaw);
     var cosP = Math.cos(pitch);
     var sinP = Math.sin(pitch);
+    var spin = still ? 0 : time * .00038;
+    var cosSpin = Math.cos(spin);
+    var sinSpin = Math.sin(spin);
     var projected = points.map(function (point) {
       var orbit = point.radius !== undefined;
-      var angle = orbit ? point.angle + (still ? 0 : time * .00014 * point.speed) : 0;
+      var angle = orbit ? point.angle + (still ? 0 : time * .00028 * point.speed) : 0;
       var px = orbit ? Math.cos(angle) * point.radius : point.x;
       var pz = orbit ? Math.sin(angle) * point.radius : point.z;
       var py = point.y + (orbit ? Math.sin(angle * 2 + point.radius * .03) * 2 : 0);
+      var opacity = point.opacity;
+      if (point.face === "lensUpper") {
+        var t = (point.initialT + (still ? 0 : time * .000065)) % 1;
+        var lens = lensPoint(t);
+        px = lens[0] + point.scatterX;
+        py = lens[1] + point.scatterY;
+        // Recompute endpoint fade from the unchanged base opacity on every draw.
+        opacity *= Math.pow(Math.sin(Math.PI * t), point.fadeExponent);
+      } else if (point.face === "horizon") {
+        var spunX = px * cosSpin + pz * sinSpin;
+        pz = pz * cosSpin - px * sinSpin;
+        px = spunX;
+      }
       var x = px * cosY + pz * sinY;
       var z = pz * cosY - px * sinY;
       var y = py * cosP + z * sinP;
       var depth = z * cosP - py * sinP;
       var perspective = 690 / (690 - depth);
       return { x: cx + x * perspective * scale, y: cy + y * perspective * scale, depth: depth,
-        size: point.size * perspective * scale, point: point };
+        size: point.size * perspective * scale, opacity: opacity, point: point };
     });
     projected.sort(function (a, b) { return a.depth - b.depth; });
 
-    function dot(item) {
+    function dot(item, lowerArc) {
       var point = item.point;
       var horizon = point.face === "horizon";
-      if (!horizon && Math.hypot(item.x - cx, item.y - cy) < holeRadius + 2) return;
+      // Mirror the lensed arc after projection so both halves keep the same
+      // silhouette and thickness as the viewing angle changes.
+      var projectedY = lowerArc ? 2 * cy - item.y : item.y;
+      // Let the lensed arc meet the sphere, without the disk's clearance margin.
+      var clearance = point.face === "lensUpper" ? 0 : 2;
+      if (!horizon && Math.hypot(item.x - cx, projectedY - cy) < holeRadius + clearance) return;
       var drift = still ? 0 : Math.sin(time * .0008 + point.phase) * (point.face === "dust" ? 2 : .45);
       var x = item.x + drift;
-      var y = item.y + drift * .6;
+      var y = projectedY + drift * .6 * (lowerArc ? -1 : 1);
       var shimmer = still ? 1 : .84 + .16 * Math.sin(time * .002 + point.phase);
-      var opacity = point.opacity * shimmer * (item.depth < 0 ? horizon ? .35 : .55 : 1);
+      var opacity = item.opacity * shimmer * (item.depth < 0 ? horizon ? .35 : .55 : 1);
       var sphereInfluence = 0;
       if (horizon && !still && hover > .002) {
         var dx = x - pointerX;
@@ -208,9 +237,13 @@
       context.fill();
     }
 
-    projected.forEach(function (item) { if (item.point.face !== "horizon" && item.depth < 0) dot(item); });
+    function externalDots(item) {
+      dot(item);
+      if (item.point.face === "lensUpper") dot(item, true);
+    }
+    projected.forEach(function (item) { if (item.point.face !== "horizon" && item.depth < 0) externalDots(item); });
     projected.forEach(function (item) { if (item.point.face === "horizon") dot(item); });
-    projected.forEach(function (item) { if (item.point.face !== "horizon" && item.depth >= 0) dot(item); });
+    projected.forEach(function (item) { if (item.point.face !== "horizon" && item.depth >= 0) externalDots(item); });
     context.globalAlpha = 1;
   }
 
